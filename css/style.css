@@ -201,4 +201,4 @@ svg.viz .sub { font-family: var(--mono); font-size: 10px; fill: var(--muted); te
   .controls button { min-width: 36px; }
   .mat td, .mat th { min-width: 32px; height: 30px; font-size: 11px; }
 }
-.code .ln > span:last-child { white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (min-width: 761px) { .code .ln > span:last-child { white-space: pre-wrap; overflow-wrap: anywhere; } }
