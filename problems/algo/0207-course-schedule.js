@@ -5,7 +5,7 @@ const code = `from collections import deque
 def canFinish(numCourses, prerequisites):
     g = [[] for _ in range(numCourses)]
     indeg = [0] * numCourses
-    for a, b in prerequisites:      # 先修 b 才能修 a：b -> a
+    for a, b in prerequisites:      # 先修 b 再修 a
         g[b].append(a)
         indeg[a] += 1
     q = deque(i for i in range(numCourses)

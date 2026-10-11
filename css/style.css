@@ -113,7 +113,7 @@ main { flex: 1; min-width: 0; padding: 20px 24px 120px; }
 .cls-dim { --fg: var(--c-dim); --bgc: transparent; opacity: .55; }
 
 /* array */
-.arr { position: relative; display: inline-flex; gap: 6px; padding-bottom: 30px; padding-top: 2px; }
+.arr { position: relative; display: inline-flex; gap: 6px; padding-bottom: 30px; padding-top: 18px; }
 .arr .cell { position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 9px; border: 1.5px solid var(--line); background: var(--bgc, var(--panel)); color: var(--fg, var(--ink)); border-color: var(--fg, var(--line)); font-family: var(--mono); font-size: 15px; font-weight: 600; transition: background .25s, border-color .25s, color .25s, transform .25s, opacity .25s; }
 .arr .cell.wide { width: auto; min-width: 44px; padding: 0 8px; }
 .arr .cell .ix { position: absolute; top: -17px; font-size: 10px; color: var(--muted); font-weight: 400; }

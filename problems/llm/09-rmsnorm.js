@@ -61,4 +61,7 @@ export default {
       return r.map((v, j) => (v / rms) * w[j]);
     }), 4);
   },
+  pyArgs({ T, d, seed = 1 }) {
+    return [randMatrix(T, d, seed), randMatrix(1, d, seed + 3, 0.5)[0].map((v) => round(1 + v, 2))];
+  },
 };

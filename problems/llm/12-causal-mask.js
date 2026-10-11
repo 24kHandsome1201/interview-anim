@@ -70,4 +70,7 @@ export default {
       return e.map((v) => v / s).concat(Array(T - i - 1).fill(0));
     }), 4);
   },
+  pyArgs({ T, seed = 1 }) {
+    return [randMatrix(T, T, seed, 2)];
+  },
 };

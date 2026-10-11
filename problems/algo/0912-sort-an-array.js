@@ -5,7 +5,7 @@ const code = `def sortArray(nums):
         if lo >= hi:
             return
         pivot = nums[hi]          # Lomuto：固定取最后一个
-        i = lo                    # i = 下一个 < pivot 的放置位
+        i = lo                    # ≤pivot 区的右边界
         for j in range(lo, hi):
             if nums[j] < pivot:
                 nums[i], nums[j] = nums[j], nums[i]

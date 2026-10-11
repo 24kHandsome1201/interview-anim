@@ -94,4 +94,7 @@ export default {
       return r;
     }), 4);
   },
+  pyArgs({ T, d, seed = 1 }) {
+    return [randMatrix(T, d, seed)];
+  },
 };

@@ -5,9 +5,9 @@ const code = `def bpe_train(corpus, num_merges):
     words = {tuple(w): c for w, c in corpus.items()}
     merges = []
     for _ in range(num_merges):
-        pairs = count_pairs(words)      # 统计相邻对频次（按词频加权）
-        best = max(pairs, key=pairs.get)
-        words = merge(words, best)      # 所有相邻的 best 都合并
+        pairs = count_pairs(words)      # 统计相邻对频次
+        best = min(pairs, key=lambda p: (-pairs[p], p))
+        words = merge(words, best)      # 相邻该对都合并
         merges.append(best)
     return merges`;
 

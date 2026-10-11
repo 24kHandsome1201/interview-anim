@@ -10,10 +10,10 @@ def mha(x, W_q, W_k, W_v, W_o, h):
     Q = Q.view(B, T, h, dk).transpose(1, 2)   # 头维前置
     K = (x @ W_k).view(B, T, h, dk).transpose(1, 2)
     V = (x @ W_v).view(B, T, h, dk).transpose(1, 2)
-    scores = Q @ K.transpose(-2, -1) / math.sqrt(dk)   # [B,h,T,T]
+    scores = Q @ K.transpose(-2, -1) / math.sqrt(dk)
     attn = torch.softmax(scores, dim=-1)
     out = attn @ V                  # [B,h,T,dk]
-    out = out.transpose(1, 2).reshape(B, T, D)  # 合并头 heads
+    out = out.transpose(1, 2).reshape(B, T, D)  # 合并头
     return out @ W_o`;
 
 export default {
@@ -117,5 +117,8 @@ export default {
       }
     }
     return roundM(out.map((r) => Wo[0].map((_, j) => r.reduce((s, v, k) => s + v * Wo[k][j], 0))), 4);
+  },
+  pyArgs({ T, D, h, seed = 1 }) {
+    return [[randMatrix(T, D, seed)], randMatrix(D, D, seed + 1, 0.6), randMatrix(D, D, seed + 2, 0.6), randMatrix(D, D, seed + 3, 0.6), randMatrix(D, D, seed + 4, 0.6), h];
   },
 };

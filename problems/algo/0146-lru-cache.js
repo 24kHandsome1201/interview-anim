@@ -1,12 +1,19 @@
 import { recorder } from '../../js/util.js';
 
-const code = `class LRUCache:
+const code = `class Node:
+    def __init__(self, key, val):
+        self.key, self.val = key, val
+        self.prev = self.next = None
+
+class LRUCache:
     def __init__(self, capacity):
         self.cap = capacity
         self.d = {}                    # key -> node
-        # 双向链表：靠近头 = 最近使用，靠近尾 = 最久没用
-        self.head = self.tail = Node(-1, -1)
-        # head.next <-> tail.prev，用一对哨兵简化边界
+        # 头尾哨兵：head.next 最近用，tail.prev 最久未用
+        self.head = Node(-1, -1)
+        self.tail = Node(-1, -1)
+        self.head.next = self.tail
+        self.tail.prev = self.head
     def _remove(self, node):
         node.prev.next = node.next
         node.next.prev = node.prev
@@ -18,7 +25,7 @@ const code = `class LRUCache:
         if key not in self.d:
             return -1
         node = self.d[key]
-        self._remove(node); self._add_front(node)  # 移到最前(MRU)
+        self._remove(node); self._add_front(node)
         return node.val
     def put(self, key, value):
         if key in self.d:
@@ -73,20 +80,20 @@ export default {
       { type: 'array', id: 'o', label: '输出（每个操作的返回值）', values: outputs.map((x) => (x === null ? 'null' : x)), showIndex: false },
       ...(txt ? [{ type: 'text', id: 't', label: '当前操作', text: txt }] : []),
     ];
-    rec.step([2, 7], `初始化容量 ${cap} 的缓存：哈希表 + 双向链表（代码里用 head/tail 哨兵省掉边界判断）。`, scene());
+    rec.step([8, 14], `初始化容量 ${cap} 的缓存：哈希表 + 双向链表（代码里用 head/tail 哨兵省掉边界判断）。`, scene());
     for (const op of ops) {
       const opStr = op[0] === 'get' ? `get(${op[1]})` : `put(${op[1]}, ${op[2]})`;
       if (op[0] === 'get') {
         const k = op[1];
-        rec.step(16, `执行 <code>${opStr}</code>：查哈希表 ${k} 在不在。`, scene({ [k]: 'cmp' }, opStr));
+        rec.step(23, `执行 <code>${opStr}</code>：查哈希表 ${k} 在不在。`, scene({ [k]: 'cmp' }, opStr));
         if (!d.has(k)) {
           outputs.push(-1);
-          rec.step(17, `${k} 不在缓存里，返回 <code>-1</code>。`, scene({}, opStr));
+          rec.step(24, `${k} 不在缓存里，返回 <code>-1</code>。`, scene({}, opStr));
         } else {
           touch(k);
           const v = d.get(k);
           outputs.push(v);
-          rec.step([18, 19, 20], `命中 ${k}（值 ${v}）：把它从链表摘下插到最前，表示「刚用过」，返回 <code>${v}</code>。`, scene({ [k]: 'ok' }, opStr));
+          rec.step([25, 26, 27], `命中 ${k}（值 ${v}）：把它从链表摘下插到最前，表示「刚用过」，返回 <code>${v}</code>。`, scene({ [k]: 'ok' }, opStr));
         }
       } else {
         const [, k, v] = op;
@@ -94,16 +101,16 @@ export default {
           d.set(k, v);
           touch(k);
           outputs.push(null);
-          rec.step([22, 23], `执行 <code>${opStr}</code>：key ${k} 已存在，先删旧节点（值更新为 ${v}），再插到最前。`, scene({ [k]: 'hl' }, opStr));
+          rec.step([29, 30], `执行 <code>${opStr}</code>：key ${k} 已存在，先删旧节点（值更新为 ${v}），再插到最前。`, scene({ [k]: 'hl' }, opStr));
         } else {
           d.set(k, v);
           order.unshift(k);
           outputs.push(null);
-          rec.step([24, 25, 26], `执行 <code>${opStr}</code>：新建节点 (${k}, ${v}) 入表并插到最前。`, scene({ [k]: 'hl' }, opStr));
+          rec.step([31, 32, 33], `执行 <code>${opStr}</code>：新建节点 (${k}, ${v}) 入表并插到最前。`, scene({ [k]: 'hl' }, opStr));
         }
         if (d.size > cap) {
           const old = evict();
-          rec.step([27, 28, 29, 30], `大小 ${d.size + 1} > 容量 ${cap}：尾部节点 <code>${old}</code> 最久未用，摘下并从哈希表删除。`, scene({ [k]: 'hl' }, `淘汰最久未用的 key = ${old}`));
+          rec.step([34, 35, 36, 37], `大小 ${d.size + 1} > 容量 ${cap}：尾部节点 <code>${old}</code> 最久未用，摘下并从哈希表删除。`, scene({ [k]: 'hl' }, `淘汰最久未用的 key = ${old}`));
         }
       }
     }

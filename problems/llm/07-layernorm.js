@@ -86,4 +86,8 @@ export default {
     }
     return roundM(out, 4);
   },
+  // exact args for the Python check: same seeded tensors run() uses
+  pyArgs({ T, d, seed = 1 }) {
+    return [randMatrix(T, d, seed), randMatrix(1, d, seed + 3, 0.5)[0].map((v) => round(1 + v, 2)), randMatrix(1, d, seed + 5, 0.5)[0]];
+  },
 };

@@ -7,8 +7,8 @@ class LoRALinear(nn.Module):
     def __init__(self, W, r, alpha):
         super().__init__()
         self.W = W                   # 冻结权重
-        self.A = nn.Parameter(torch.randn(r, W.size(1)) * 0.01)
-        self.B = nn.Parameter(torch.zeros(W.size(0), r))  # B 初始 0
+        self.A = nn.Parameter(torch.randn(r, W.size(1)))
+        self.B = nn.Parameter(torch.zeros(W.size(0), r))
         self.s = alpha / r
     def forward(self, x):
         return (x @ self.W.T
@@ -89,5 +89,11 @@ export default {
     // merged W then single forward — independent route
     const merged = W.map((rr, i) => rr.map((v, j) => v + s * Bt[i].reduce((a, b, kk) => a + b * A[kk][j], 0)));
     return merged.map((row) => round(x.reduce((a, xv, i) => a + xv * row[i], 0), 4));
+  },
+  pyArgs({ d, r, alpha, seed = 1 }) {
+    return {
+      W: randMatrix(d, d, seed), A: randMatrix(r, d, seed + 1, 0.1),
+      Bt: randMatrix(d, r, seed + 2, 0.3), x: randMatrix(1, d, seed + 3), r, alpha,
+    };
   },
 };

@@ -6,7 +6,7 @@ def top_p_sample(logits, p, u):
     probs = torch.softmax(logits, dim=-1)
     sorted_p, idx = probs.sort(descending=True)
     cum = sorted_p.cumsum(-1)
-    keep = cum - sorted_p <= p        # 累积概率 ≤ p 的最小集合
+    keep = cum - sorted_p <= p        # 保留 ≤p 的核
     sorted_p = sorted_p * keep
     sorted_p = sorted_p / sorted_p.sum()   # 重新归一化
     cum = sorted_p.cumsum(-1)

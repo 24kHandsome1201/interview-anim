@@ -5,7 +5,7 @@ const code = `import torch
 def moe_forward(x, W_gate, experts, k):
     logits = x @ W_gate                    # [T, E]
     probs = torch.softmax(logits, dim=-1)
-    topv, topi = probs.topk(k, dim=-1)     # 每个 token 选 k 个专家
+    topv, topi = probs.topk(k, dim=-1)     # 选 k 个专家
     w = topv / topv.sum(dim=-1, keepdim=True)   # 重新归一化
     out = torch.zeros_like(x)
     for t in range(x.size(0)):
@@ -91,5 +91,11 @@ export default {
           for (let i = 0; i < d; i++) res[j] += (v / s) * x[t][i] * experts[e][i][j];
       return res;
     }), 4);
+  },
+  pyArgs({ T, d, E, k, seed = 1 }) {
+    return {
+      x: randMatrix(T, d, seed), Wg: randMatrix(d, E, seed + 7), k,
+      experts: Array.from({ length: E }, (_, e) => randMatrix(d, d, seed + 20 + e)),
+    };
   },
 };

@@ -92,4 +92,12 @@ export default {
     }
     return roundM(outs, 4);
   },
+  pyArgs({ T, dk, h_q, h_kv, seed = 1 }) {
+    return {
+      Q: Array.from({ length: h_q }, (_, i) => randMatrix(T, dk, seed + i * 11)),
+      K: Array.from({ length: h_kv }, (_, i) => randMatrix(T, dk, seed + 100 + i * 11)),
+      V: Array.from({ length: h_kv }, (_, i) => randMatrix(T, dk, seed + 200 + i * 11)),
+      h_q, h_kv,
+    };
+  },
 };

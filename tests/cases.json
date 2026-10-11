@@ -1,0 +1,4594 @@
+{
+ "lc-1": {
+  "title": "两数之和",
+  "track": "algo",
+  "code": "def twoSum(nums, target):\n    seen = {}            # 值 -> 下标\n    for i, x in enumerate(nums):\n        if target - x in seen:\n            return [seen[target - x], i]\n        seen[x] = i\n    return []",
+  "cases": [
+   {
+    "name": "示例 1",
+    "input": {
+     "nums": [
+      3,
+      2,
+      4,
+      7,
+      1
+     ],
+     "target": 6
+    },
+    "pyArgs": null,
+    "expected": [
+     1,
+     2
+    ]
+   },
+   {
+    "name": "示例 2",
+    "input": {
+     "nums": [
+      2,
+      7,
+      11,
+      15
+     ],
+     "target": 9
+    },
+    "pyArgs": null,
+    "expected": [
+     0,
+     1
+    ]
+   }
+  ]
+ },
+ "lc-560": {
+  "title": "和为 K 的子数组",
+  "track": "algo",
+  "code": "def subarraySum(nums, k):\n    cnt = {0: 1}       # 前缀和 -> 出现次数\n    pre = 0\n    ans = 0\n    for x in nums:\n        pre += x\n        ans += cnt.get(pre - k, 0)\n        cnt[pre] = cnt.get(pre, 0) + 1\n    return ans",
+  "cases": [
+   {
+    "name": "示例 1",
+    "input": {
+     "nums": [
+      1,
+      1,
+      1
+     ],
+     "k": 2
+    },
+    "pyArgs": null,
+    "expected": 2
+   },
+   {
+    "name": "示例 2（含负数）",
+    "input": {
+     "nums": [
+      1,
+      2,
+      -1,
+      3,
+      -2,
+      1
+     ],
+     "k": 3
+    },
+    "pyArgs": null,
+    "expected": 4
+   }
+  ]
+ },
+ "lc-11": {
+  "title": "盛最多水的容器",
+  "track": "algo",
+  "code": "def maxArea(height):\n    left, right = 0, len(height) - 1\n    best = 0\n    while left < right:\n        h = min(height[left], height[right])\n        area = h * (right - left)\n        best = max(best, area)\n        if height[left] < height[right]:\n            left += 1\n        else:\n            right -= 1\n    return best",
+  "cases": [
+   {
+    "name": "示例 1",
+    "input": {
+     "height": [
+      1,
+      8,
+      6,
+      2,
+      5,
+      4,
+      8,
+      3,
+      7
+     ]
+    },
+    "pyArgs": null,
+    "expected": 49
+   },
+   {
+    "name": "示例 2",
+    "input": {
+     "height": [
+      2,
+      3,
+      4,
+      5,
+      18,
+      17,
+      6
+     ]
+    },
+    "pyArgs": null,
+    "expected": 17
+   }
+  ]
+ },
+ "lc-15": {
+  "title": "三数之和",
+  "track": "algo",
+  "code": "def threeSum(nums):\n    nums.sort()\n    ans = []\n    n = len(nums)\n    for i in range(n):\n        if i and nums[i] == nums[i - 1]:\n            continue            # 跳过重复的三元组\n        l, r = i + 1, n - 1\n        while l < r:\n            s = nums[i] + nums[l] + nums[r]\n            if s < 0:\n                l += 1\n            elif s > 0:\n                r -= 1\n            else:\n                ans.append([nums[i], nums[l], nums[r]])\n                l += 1\n                r -= 1\n                while l < r and nums[l] == nums[l - 1]:\n                    l += 1      # 跳过重复的左数\n                while l < r and nums[r] == nums[r + 1]:\n                    r -= 1      # 跳过重复的右数\n    return ans",
+  "cases": [
+   {
+    "name": "示例 1",
+    "input": {
+     "nums": [
+      -1,
+      0,
+      1,
+      2,
+      -1,
+      -4
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     [
+      -1,
+      -1,
+      2
+     ],
+     [
+      -1,
+      0,
+      1
+     ]
+    ]
+   },
+   {
+    "name": "示例 2（有重复）",
+    "input": {
+     "nums": [
+      -2,
+      0,
+      0,
+      2,
+      2,
+      -1,
+      1
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     [
+      -2,
+      0,
+      2
+     ],
+     [
+      -1,
+      0,
+      1
+     ]
+    ]
+   }
+  ]
+ },
+ "lc-42": {
+  "title": "接雨水",
+  "track": "algo",
+  "code": "def trap(height):\n    left, right = 0, len(height) - 1\n    left_max = right_max = 0\n    ans = 0\n    while left < right:\n        if height[left] < height[right]:\n            left_max = max(left_max, height[left])\n            ans += left_max - height[left]\n            left += 1\n        else:\n            right_max = max(right_max, height[right])\n            ans += right_max - height[right]\n            right -= 1\n    return ans",
+  "cases": [
+   {
+    "name": "示例 1",
+    "input": {
+     "height": [
+      0,
+      1,
+      0,
+      2,
+      1,
+      0,
+      1,
+      3,
+      2,
+      1,
+      2,
+      1
+     ]
+    },
+    "pyArgs": null,
+    "expected": 6
+   },
+   {
+    "name": "示例 2",
+    "input": {
+     "height": [
+      4,
+      2,
+      0,
+      3,
+      2,
+      5
+     ]
+    },
+    "pyArgs": null,
+    "expected": 9
+   }
+  ]
+ },
+ "lc-3": {
+  "title": "无重复字符的最长子串",
+  "track": "algo",
+  "code": "def lengthOfLongestSubstring(s):\n    last = {}            # 字符 -> 上次出现的下标\n    start = best = 0\n    for i, ch in enumerate(s):\n        if ch in last and last[ch] >= start:\n            start = last[ch] + 1\n        last[ch] = i\n        best = max(best, i - start + 1)\n    return best",
+  "cases": [
+   {
+    "name": "abcabcbb",
+    "input": {
+     "s": "abcabcbb"
+    },
+    "pyArgs": null,
+    "expected": 3
+   },
+   {
+    "name": "pwwkew",
+    "input": {
+     "s": "pwwkew"
+    },
+    "pyArgs": null,
+    "expected": 3
+   }
+  ]
+ },
+ "lc-239": {
+  "title": "滑动窗口最大值",
+  "track": "algo",
+  "code": "from collections import deque\n\ndef maxSlidingWindow(nums, k):\n    dq = deque()       # 存下标，对应值单调递减\n    ans = []\n    for i, x in enumerate(nums):\n        while dq and nums[dq[-1]] < x:\n            dq.pop()   # 比 x 小又靠左，不可能是最大值\n        dq.append(i)\n        if dq[0] <= i - k:\n            dq.popleft()  # 队头滑出窗口\n        if i >= k - 1:\n            ans.append(nums[dq[0]])\n    return ans",
+  "cases": [
+   {
+    "name": "示例 1",
+    "input": {
+     "nums": [
+      1,
+      3,
+      -1,
+      -3,
+      5,
+      3,
+      6,
+      7
+     ],
+     "k": 3
+    },
+    "pyArgs": null,
+    "expected": [
+     3,
+     3,
+     5,
+     5,
+     6,
+     7
+    ]
+   },
+   {
+    "name": "示例 2",
+    "input": {
+     "nums": [
+      9,
+      10,
+      9,
+      -7,
+      -4,
+      -8,
+      2,
+      -6
+     ],
+     "k": 5
+    },
+    "pyArgs": null,
+    "expected": [
+     10,
+     10,
+     9,
+     2
+    ]
+   }
+  ]
+ },
+ "lc-206": {
+  "title": "反转链表",
+  "track": "algo",
+  "code": "def reverseList(head):\n    prev = None\n    cur = head\n    while cur:\n        nxt = cur.next      # 先记住后继\n        cur.next = prev     # 掉头\n        prev = cur          # prev 前进\n        cur = nxt           # cur 前进\n    return prev             # 新头节点",
+  "cases": [
+   {
+    "name": "示例 1",
+    "input": {
+     "vals": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     5,
+     4,
+     3,
+     2,
+     1
+    ]
+   },
+   {
+    "name": "示例 2",
+    "input": {
+     "vals": [
+      1,
+      2
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     2,
+     1
+    ]
+   }
+  ]
+ },
+ "lc-142": {
+  "title": "环形链表 II",
+  "track": "algo",
+  "code": "def detectCycle(head):\n    slow = fast = head\n    # 第一阶段：快慢指针找相遇点\n    while fast and fast.next:\n        slow = slow.next          # 慢指针走 1 步\n        fast = fast.next.next     # 快指针走 2 步\n        if slow is fast:\n            break\n    else:\n        return None               # 无环\n    # 第二阶段：一个指针回头部，同速走\n    slow = head\n    while slow is not fast:\n        slow = slow.next\n        fast = fast.next\n    return slow                   # 环的入口",
+  "cases": [
+   {
+    "name": "入口在下标 1",
+    "input": {
+     "vals": [
+      3,
+      2,
+      0,
+      -4
+     ],
+     "pos": 1
+    },
+    "pyArgs": null,
+    "expected": 1
+   },
+   {
+    "name": "入口在下标 0",
+    "input": {
+     "vals": [
+      1,
+      2
+     ],
+     "pos": 0
+    },
+    "pyArgs": null,
+    "expected": 0
+   }
+  ]
+ },
+ "lc-146": {
+  "title": "LRU 缓存",
+  "track": "algo",
+  "code": "class Node:\n    def __init__(self, key, val):\n        self.key, self.val = key, val\n        self.prev = self.next = None\n\nclass LRUCache:\n    def __init__(self, capacity):\n        self.cap = capacity\n        self.d = {}                    # key -> node\n        # 头尾哨兵：head.next 最近用，tail.prev 最久未用\n        self.head = Node(-1, -1)\n        self.tail = Node(-1, -1)\n        self.head.next = self.tail\n        self.tail.prev = self.head\n    def _remove(self, node):\n        node.prev.next = node.next\n        node.next.prev = node.prev\n    def _add_front(self, node):\n        node.prev = self.head\n        node.next = self.head.next\n        node.next.prev = self.head.next = node\n    def get(self, key):\n        if key not in self.d:\n            return -1\n        node = self.d[key]\n        self._remove(node); self._add_front(node)\n        return node.val\n    def put(self, key, value):\n        if key in self.d:\n            self._remove(self.d[key])\n        node = Node(key, value)\n        self.d[key] = node\n        self._add_front(node)\n        if len(self.d) > self.cap:\n            old = self.tail.prev       # 最久未用\n            self._remove(old)\n            del self.d[old.key]",
+  "cases": [
+   {
+    "name": "力扣示例",
+    "input": {
+     "cap": 2,
+     "ops": [
+      [
+       "put",
+       1,
+       1
+      ],
+      [
+       "put",
+       2,
+       2
+      ],
+      [
+       "get",
+       1
+      ],
+      [
+       "put",
+       3,
+       3
+      ],
+      [
+       "get",
+       2
+      ],
+      [
+       "put",
+       4,
+       4
+      ],
+      [
+       "get",
+       1
+      ],
+      [
+       "get",
+       3
+      ],
+      [
+       "get",
+       4
+      ]
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     null,
+     null,
+     1,
+     null,
+     -1,
+     null,
+     -1,
+     3,
+     4
+    ]
+   },
+   {
+    "name": "更新已有 key",
+    "input": {
+     "cap": 2,
+     "ops": [
+      [
+       "put",
+       2,
+       1
+      ],
+      [
+       "put",
+       2,
+       2
+      ],
+      [
+       "get",
+       2
+      ],
+      [
+       "put",
+       1,
+       1
+      ],
+      [
+       "put",
+       4,
+       1
+      ],
+      [
+       "get",
+       2
+      ]
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     null,
+     null,
+     2,
+     null,
+     null,
+     -1
+    ]
+   }
+  ]
+ },
+ "lc-102": {
+  "title": "二叉树的层序遍历",
+  "track": "algo",
+  "code": "from collections import deque\n\ndef levelOrder(root):\n    if not root:\n        return []\n    ans = []\n    q = deque([root])\n    while q:\n        level = []\n        for _ in range(len(q)):   # 锁死本层节点数\n            node = q.popleft()\n            level.append(node.val)\n            if node.left:\n                q.append(node.left)\n            if node.right:\n                q.append(node.right)\n        ans.append(level)\n    return ans",
+  "cases": [
+   {
+    "name": "示例 1",
+    "input": {
+     "root": [
+      3,
+      9,
+      20,
+      null,
+      null,
+      15,
+      7
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     [
+      3
+     ],
+     [
+      9,
+      20
+     ],
+     [
+      15,
+      7
+     ]
+    ]
+   },
+   {
+    "name": "示例 2（不平衡）",
+    "input": {
+     "root": [
+      1,
+      2,
+      3,
+      4,
+      null,
+      null,
+      5
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     [
+      1
+     ],
+     [
+      2,
+      3
+     ],
+     [
+      4,
+      5
+     ]
+    ]
+   }
+  ]
+ },
+ "lc-236": {
+  "title": "二叉树的最近公共祖先",
+  "track": "algo",
+  "code": "def lowestCommonAncestor(root, p, q):\n    if root in (None, p, q):\n        return root              # 空 / 命中，直接上报\n    left = lowestCommonAncestor(root.left, p, q)\n    right = lowestCommonAncestor(root.right, p, q)\n    if left and right:\n        return root              # p、q 分居两侧 -> 即 LCA\n    return left or right         # 非空一边继续上报",
+  "cases": [
+   {
+    "name": "示例 1",
+    "input": {
+     "root": [
+      3,
+      5,
+      1,
+      6,
+      2,
+      0,
+      8,
+      null,
+      null,
+      7,
+      4
+     ],
+     "p": 5,
+     "q": 1
+    },
+    "pyArgs": null,
+    "expected": 3
+   },
+   {
+    "name": "p 是 q 的祖先",
+    "input": {
+     "root": [
+      3,
+      5,
+      1,
+      6,
+      2,
+      0,
+      8,
+      null,
+      null,
+      7,
+      4
+     ],
+     "p": 5,
+     "q": 4
+    },
+    "pyArgs": null,
+    "expected": 5
+   }
+  ]
+ },
+ "lc-200": {
+  "title": "岛屿数量",
+  "track": "algo",
+  "code": "def numIslands(grid):\n    count = 0\n    for i in range(len(grid)):\n        for j in range(len(grid[0])):\n            if grid[i][j] == '1':\n                count += 1\n                dfs(grid, i, j)   # 把整座岛染成 '0'\n    return count\n\ndef dfs(g, i, j):\n    if (i < 0 or i >= len(g) or j < 0 or j >= len(g[0])\n            or g[i][j] != '1'):\n        return\n    g[i][j] = '0'                 # 染色 = 标记访问过\n    dfs(g, i + 1, j)\n    dfs(g, i - 1, j)\n    dfs(g, i, j + 1)\n    dfs(g, i, j - 1)",
+  "cases": [
+   {
+    "name": "三座岛",
+    "input": {
+     "grid": [
+      [
+       "1",
+       "1",
+       "0",
+       "0"
+      ],
+      [
+       "1",
+       "0",
+       "0",
+       "1"
+      ],
+      [
+       "0",
+       "0",
+       "1",
+       "1"
+      ],
+      [
+       "1",
+       "0",
+       "0",
+       "0"
+      ]
+     ]
+    },
+    "pyArgs": null,
+    "expected": 3
+   },
+   {
+    "name": "一座大岛",
+    "input": {
+     "grid": [
+      [
+       "1",
+       "1",
+       "0"
+      ],
+      [
+       "0",
+       "1",
+       "0"
+      ],
+      [
+       "0",
+       "1",
+       "1"
+      ]
+     ]
+    },
+    "pyArgs": null,
+    "expected": 1
+   }
+  ]
+ },
+ "lc-207": {
+  "title": "课程表",
+  "track": "algo",
+  "code": "from collections import deque\n\ndef canFinish(numCourses, prerequisites):\n    g = [[] for _ in range(numCourses)]\n    indeg = [0] * numCourses\n    for a, b in prerequisites:      # 先修 b 再修 a\n        g[b].append(a)\n        indeg[a] += 1\n    q = deque(i for i in range(numCourses)\n              if indeg[i] == 0)\n    done = 0\n    while q:\n        u = q.popleft()\n        done += 1\n        for v in g[u]:\n            indeg[v] -= 1\n            if indeg[v] == 0:\n                q.append(v)\n    return done == numCourses",
+  "cases": [
+   {
+    "name": "可以完成",
+    "input": {
+     "n": 4,
+     "pre": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       2
+      ]
+     ]
+    },
+    "pyArgs": null,
+    "expected": true
+   },
+   {
+    "name": "有环",
+    "input": {
+     "n": 3,
+     "pre": [
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       2,
+       1
+      ]
+     ]
+    },
+    "pyArgs": null,
+    "expected": false
+   }
+  ]
+ },
+ "lc-46": {
+  "title": "全排列",
+  "track": "algo",
+  "code": "def permute(nums):\n    ans = []\n    def dfs(path, used):\n        if len(path) == len(nums):\n            ans.append(path.copy())   # 到底了，收一个排列\n            return\n        for i in range(len(nums)):\n            if used[i]:\n                continue\n            used[i] = True            # 做选择\n            path.append(nums[i])\n            dfs(path, used)\n            path.pop()                # 撤销选择\n            used[i] = False\n    dfs([], [False] * len(nums))\n    return ans",
+  "cases": [
+   {
+    "name": "n=3",
+    "input": {
+     "nums": [
+      1,
+      2,
+      3
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     [
+      1,
+      2,
+      3
+     ],
+     [
+      1,
+      3,
+      2
+     ],
+     [
+      2,
+      1,
+      3
+     ],
+     [
+      2,
+      3,
+      1
+     ],
+     [
+      3,
+      1,
+      2
+     ],
+     [
+      3,
+      2,
+      1
+     ]
+    ]
+   },
+   {
+    "name": "n=4",
+    "input": {
+     "nums": [
+      1,
+      2,
+      3,
+      4
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     [
+      1,
+      2,
+      3,
+      4
+     ],
+     [
+      1,
+      2,
+      4,
+      3
+     ],
+     [
+      1,
+      3,
+      2,
+      4
+     ],
+     [
+      1,
+      3,
+      4,
+      2
+     ],
+     [
+      1,
+      4,
+      2,
+      3
+     ],
+     [
+      1,
+      4,
+      3,
+      2
+     ],
+     [
+      2,
+      1,
+      3,
+      4
+     ],
+     [
+      2,
+      1,
+      4,
+      3
+     ],
+     [
+      2,
+      3,
+      1,
+      4
+     ],
+     [
+      2,
+      3,
+      4,
+      1
+     ],
+     [
+      2,
+      4,
+      1,
+      3
+     ],
+     [
+      2,
+      4,
+      3,
+      1
+     ],
+     [
+      3,
+      1,
+      2,
+      4
+     ],
+     [
+      3,
+      1,
+      4,
+      2
+     ],
+     [
+      3,
+      2,
+      1,
+      4
+     ],
+     [
+      3,
+      2,
+      4,
+      1
+     ],
+     [
+      3,
+      4,
+      1,
+      2
+     ],
+     [
+      3,
+      4,
+      2,
+      1
+     ],
+     [
+      4,
+      1,
+      2,
+      3
+     ],
+     [
+      4,
+      1,
+      3,
+      2
+     ],
+     [
+      4,
+      2,
+      1,
+      3
+     ],
+     [
+      4,
+      2,
+      3,
+      1
+     ],
+     [
+      4,
+      3,
+      1,
+      2
+     ],
+     [
+      4,
+      3,
+      2,
+      1
+     ]
+    ]
+   }
+  ]
+ },
+ "lc-33": {
+  "title": "搜索旋转排序数组",
+  "track": "algo",
+  "code": "def search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[lo] <= nums[mid]:\n            # 左半有序\n            if nums[lo] <= target < nums[mid]:\n                hi = mid - 1\n            else:\n                lo = mid + 1\n        else:\n            # 右半有序\n            if nums[mid] < target <= nums[hi]:\n                lo = mid + 1\n            else:\n                hi = mid - 1\n    return -1",
+  "cases": [
+   {
+    "name": "找得到",
+    "input": {
+     "nums": [
+      4,
+      5,
+      6,
+      7,
+      0,
+      1,
+      2
+     ],
+     "target": 0
+    },
+    "pyArgs": null,
+    "expected": 4
+   },
+   {
+    "name": "找不到",
+    "input": {
+     "nums": [
+      4,
+      5,
+      6,
+      7,
+      0,
+      1,
+      2
+     ],
+     "target": 3
+    },
+    "pyArgs": null,
+    "expected": -1
+   }
+  ]
+ },
+ "lc-739": {
+  "title": "每日温度",
+  "track": "algo",
+  "code": "def dailyTemperatures(T):\n    ans = [0] * len(T)\n    st = []                # 存下标，对应温度单调递减\n    for i, t in enumerate(T):\n        while st and T[st[-1]] < t:\n            j = st.pop()   # j 等来了第一个更暖的日子\n            ans[j] = i - j\n        st.append(i)\n    return ans",
+  "cases": [
+   {
+    "name": "示例 1",
+    "input": {
+     "T": [
+      73,
+      74,
+      75,
+      71,
+      69,
+      72,
+      76,
+      73
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     1,
+     1,
+     4,
+     2,
+     1,
+     1,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "单调递减",
+    "input": {
+     "T": [
+      90,
+      80,
+      70,
+      60,
+      85
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     0,
+     3,
+     2,
+     1,
+     0
+    ]
+   }
+  ]
+ },
+ "lc-912": {
+  "title": "排序数组（快速排序）",
+  "track": "algo",
+  "code": "def sortArray(nums):\n    def qs(lo, hi):\n        if lo >= hi:\n            return\n        pivot = nums[hi]          # Lomuto：固定取最后一个\n        i = lo                    # ≤pivot 区的右边界\n        for j in range(lo, hi):\n            if nums[j] < pivot:\n                nums[i], nums[j] = nums[j], nums[i]\n                i += 1\n        nums[i], nums[hi] = nums[hi], nums[i]  # pivot 归位\n        qs(lo, i - 1)\n        qs(i + 1, hi)\n    qs(0, len(nums) - 1)\n    return nums",
+  "cases": [
+   {
+    "name": "示例",
+    "input": {
+     "nums": [
+      5,
+      2,
+      9,
+      4,
+      7,
+      1,
+      8,
+      3
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     7,
+     8,
+     9
+    ]
+   },
+   {
+    "name": "较短",
+    "input": {
+     "nums": [
+      4,
+      1,
+      3,
+      5,
+      2
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   }
+  ]
+ },
+ "lc-322": {
+  "title": "零钱兑换",
+  "track": "algo",
+  "code": "def coinChange(coins, amount):\n    INF = float('inf')\n    dp = [INF] * (amount + 1)\n    dp[0] = 0                  # 凑 0 元要 0 枚\n    for i in range(1, amount + 1):\n        for c in coins:\n            if c <= i:\n                dp[i] = min(dp[i], dp[i - c] + 1)\n    return -1 if dp[amount] == INF else dp[amount]",
+  "cases": [
+   {
+    "name": "示例 1",
+    "input": {
+     "coins": [
+      1,
+      2,
+      5
+     ],
+     "amount": 11
+    },
+    "pyArgs": null,
+    "expected": 3
+   },
+   {
+    "name": "凑不出",
+    "input": {
+     "coins": [
+      2,
+      4
+     ],
+     "amount": 7
+    },
+    "pyArgs": null,
+    "expected": -1
+   }
+  ]
+ },
+ "lc-72": {
+  "title": "编辑距离",
+  "track": "algo",
+  "code": "def minDistance(w1, w2):\n    m, n = len(w1), len(w2)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(m + 1):\n        dp[i][0] = i            # w1 前 i 个全删\n    for j in range(n + 1):\n        dp[0][j] = j            # 全插成 w2 前 j 个\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if w1[i - 1] == w2[j - 1]:\n                dp[i][j] = dp[i - 1][j - 1]  # 相同白嫖\n            else:\n                dp[i][j] = 1 + min(\n                    dp[i - 1][j],      # 删\n                    dp[i][j - 1],      # 插\n                    dp[i - 1][j - 1])  # 换\n    return dp[m][n]",
+  "cases": [
+   {
+    "name": "horse → ros",
+    "input": {
+     "w1": "horse",
+     "w2": "ros"
+    },
+    "pyArgs": null,
+    "expected": 3
+   },
+   {
+    "name": "intention → execution 的前缀",
+    "input": {
+     "w1": "int",
+     "w2": "ex"
+    },
+    "pyArgs": null,
+    "expected": 3
+   }
+  ]
+ },
+ "llm-1": {
+  "title": "数值稳定的 softmax",
+  "track": "llm",
+  "code": "import torch\n\ndef softmax(x):\n    x = x - x.max()      # 先减最大值，防止 exp 溢出\n    e = torch.exp(x)\n    return e / e.sum()   # 归一化，所有元素和为 1",
+  "cases": [
+   {
+    "name": "大 logits（朴素实现溢出）",
+    "input": {
+     "x": [
+      1000,
+      1001,
+      1002
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     0.090031,
+     0.244728,
+     0.665241
+    ]
+   },
+   {
+    "name": "普通 logits",
+    "input": {
+     "x": [
+      2,
+      1,
+      0.1,
+      -1
+     ]
+    },
+    "pyArgs": null,
+    "expected": [
+     0.638066,
+     0.234731,
+     0.095435,
+     0.031767
+    ]
+   }
+  ]
+ },
+ "llm-7": {
+  "title": "LayerNorm",
+  "track": "llm",
+  "code": "import torch\n\ndef layer_norm(x, gamma, beta, eps=1e-5):\n    mean = x.mean(dim=-1, keepdim=True)\n    var = x.var(dim=-1, unbiased=False, keepdim=True)\n    x_hat = (x - mean) / torch.sqrt(var + eps)\n    return gamma * x_hat + beta",
+  "cases": [
+   {
+    "name": "T=3, d=4",
+    "input": {
+     "T": 3,
+     "d": 4,
+     "seed": 2
+    },
+    "pyArgs": [
+     [
+      [
+       -0.53,
+       -0.08,
+       -0.62,
+       0.48
+      ],
+      [
+       0.43,
+       -0.77,
+       -0.59,
+       -0.06
+      ],
+      [
+       0.05,
+       0.39,
+       0.41,
+       -0.79
+      ]
+     ],
+     [
+      0.74,
+      1.23,
+      0.74,
+      1.35
+     ],
+     [
+      -0.26,
+      0.41,
+      0.11,
+      0.43
+     ]
+    ],
+    "expected": [
+     [
+      -0.8409,
+      0.713,
+      -0.6235,
+      2.4953
+     ],
+     [
+      0.8062,
+      -0.9567,
+      -0.429,
+      0.9683
+     ],
+     [
+      -0.2067,
+      1.3585,
+      0.7111,
+      -1.8047
+     ]
+    ]
+   },
+   {
+    "name": "T=4, d=5",
+    "input": {
+     "T": 4,
+     "d": 5,
+     "seed": 7
+    },
+    "pyArgs": [
+     [
+      [
+       -0.52,
+       0.83,
+       0.22,
+       0.85,
+       -0.9
+      ],
+      [
+       0.71,
+       -0.28,
+       -0.89,
+       -0.86,
+       0.97
+      ],
+      [
+       0.95,
+       0.06,
+       -0.1,
+       0.1,
+       0.21
+      ],
+      [
+       0.55,
+       0.56,
+       -0.16,
+       -0.05,
+       0.7
+      ]
+     ],
+     [
+      0.74,
+      0.69,
+      1.17,
+      0.54,
+      0.55
+     ],
+     [
+      -0.26,
+      -0.13,
+      -0.46,
+      -0.39,
+      -0.12
+     ]
+    ],
+    "expected": [
+     [
+      -0.9054,
+      0.5871,
+      -0.2546,
+      0.1865,
+      -0.8956
+     ],
+     [
+      0.4814,
+      -0.3161,
+      -1.6923,
+      -0.9379,
+      0.6147
+     ],
+     [
+      1.1645,
+      -0.4762,
+      -1.5574,
+      -0.602,
+      -0.171
+     ],
+     [
+      0.2225,
+      0.3394,
+      -2.052,
+      -0.9564,
+      0.4724
+     ]
+    ]
+   }
+  ]
+ },
+ "llm-9": {
+  "title": "RMSNorm",
+  "track": "llm",
+  "code": "import torch\n\ndef rms_norm(x, weight, eps=1e-6):\n    ms = x.pow(2).mean(dim=-1, keepdim=True)\n    rms = torch.sqrt(ms + eps)\n    return x / rms * weight",
+  "cases": [
+   {
+    "name": "T=3, d=4",
+    "input": {
+     "T": 3,
+     "d": 4,
+     "seed": 4
+    },
+    "pyArgs": [
+     [
+      [
+       -0.52,
+       0.28,
+       0.12,
+       0.63
+      ],
+      [
+       -0.9,
+       0.23,
+       -0.86,
+       -0.39
+      ],
+      [
+       0.09,
+       0.62,
+       0.22,
+       -0.05
+      ]
+     ],
+     [
+      0.74,
+      1.41,
+      1.11,
+      1.43
+     ]
+    ],
+    "expected": [
+     [
+      -0.8827,
+      0.9057,
+      0.3056,
+      2.0667
+     ],
+     [
+      -1.0056,
+      0.4897,
+      -1.4413,
+      -0.8421
+     ],
+     [
+      0.2,
+      2.6257,
+      0.7335,
+      -0.2148
+     ]
+    ]
+   },
+   {
+    "name": "T=4, d=4",
+    "input": {
+     "T": 4,
+     "d": 4,
+     "seed": 9
+    },
+    "pyArgs": [
+     [
+      [
+       -0.52,
+       -0.81,
+       0.96,
+       -1
+      ],
+      [
+       -0.24,
+       -0.3,
+       -0.55,
+       0.77
+      ],
+      [
+       -0.83,
+       -0.8,
+       0.76,
+       0.8
+      ],
+      [
+       -0.19,
+       -0.1,
+       -0.88,
+       0.42
+      ]
+     ],
+     [
+      0.74,
+      0.87,
+      0.54,
+      0.61
+     ]
+    ],
+    "expected": [
+     [
+      -0.456,
+      -0.8351,
+      0.6144,
+      -0.7229
+     ],
+     [
+      -0.3478,
+      -0.5111,
+      -0.5816,
+      0.9198
+     ],
+     [
+      -0.7698,
+      -0.8723,
+      0.5144,
+      0.6116
+     ],
+     [
+      -0.2816,
+      -0.1743,
+      -0.9519,
+      0.5132
+     ]
+    ]
+   }
+  ]
+ },
+ "llm-11": {
+  "title": "Scaled Dot-Product Attention",
+  "track": "llm",
+  "code": "import math\nimport torch\n\ndef attention(Q, K, V, mask=None):\n    d_k = Q.size(-1)\n    scores = Q @ K.transpose(-2, -1) / math.sqrt(d_k)\n    if mask is not None:\n        scores = scores.masked_fill(mask == 0,\n                                      float('-inf'))\n    weights = torch.softmax(scores, dim=-1)\n    return weights @ V",
+  "cases": [
+   {
+    "name": "T=3, d=4",
+    "input": {
+     "T": 3,
+     "d": 4,
+     "seed": 3,
+     "causal": false
+    },
+    "pyArgs": [
+     [
+      [
+       -0.53,
+       0.1,
+       0.75,
+       0.56
+      ],
+      [
+       -0.23,
+       0.73,
+       0.27,
+       -0.22
+      ],
+      [
+       -0.93,
+       0.51,
+       -0.68,
+       0.58
+      ]
+     ],
+     [
+      [
+       -0.52,
+       -0.63,
+       0.33,
+       -0.92
+      ],
+      [
+       -0.9,
+       -0.8,
+       0.31,
+       0.6
+      ],
+      [
+       0.19,
+       -0.69,
+       -0.33,
+       0.17
+      ]
+     ],
+     [
+      [
+       -0.52,
+       0.46,
+       0.55,
+       -0.48
+      ],
+      [
+       -0.9,
+       0.17,
+       -0.52,
+       -0.4
+      ],
+      [
+       0.29,
+       0,
+       -0.89,
+       0.39
+      ]
+     ],
+     null
+    ],
+    "expected": [
+     [
+      -0.4986,
+      0.2099,
+      -0.3093,
+      -0.2274
+     ],
+     [
+      -0.4115,
+      0.2347,
+      -0.2078,
+      -0.2055
+     ],
+     [
+      -0.4438,
+      0.1908,
+      -0.365,
+      -0.1801
+     ]
+    ]
+   },
+   {
+    "name": "T=4, d=4，带因果 mask",
+    "input": {
+     "T": 4,
+     "d": 4,
+     "seed": 5,
+     "causal": true
+    },
+    "pyArgs": [
+     [
+      [
+       -0.52,
+       0.46,
+       -0.51,
+       0.71
+      ],
+      [
+       0.43,
+       -0.28,
+       0,
+       -0.56
+      ],
+      [
+       -0.9,
+       0.74,
+       -0.87,
+       -0.68
+      ],
+      [
+       0,
+       0.29,
+       -0.7,
+       0.69
+      ]
+     ],
+     [
+      [
+       -0.52,
+       -0.27,
+       -0.93,
+       -0.78
+      ],
+      [
+       -0.24,
+       0.19,
+       0.03,
+       0.27
+      ],
+      [
+       0.22,
+       -0.46,
+       -0.52,
+       0.91
+      ],
+      [
+       -0.33,
+       -0.39,
+       0.49,
+       -0.78
+      ]
+     ],
+     [
+      [
+       -0.51,
+       0.82,
+       -0.71,
+       -0.33
+      ],
+      [
+       -0.24,
+       -0.84,
+       -0.8,
+       -0.74
+      ],
+      [
+       0.33,
+       0.23,
+       0.93,
+       -0.87
+      ],
+      [
+       -0.61,
+       -0.96,
+       -0.77,
+       0.81
+      ]
+     ],
+     [
+      [
+       1,
+       0,
+       0,
+       0
+      ],
+      [
+       1,
+       1,
+       0,
+       0
+      ],
+      [
+       1,
+       1,
+       1,
+       0
+      ],
+      [
+       1,
+       1,
+       1,
+       1
+      ]
+     ]
+    ],
+    "expected": [
+     [
+      -0.51,
+      0.82,
+      -0.71,
+      -0.33
+     ],
+     [
+      -0.395,
+      0.1128,
+      -0.7483,
+      -0.5047
+     ],
+     [
+      -0.2905,
+      0.2715,
+      -0.4469,
+      -0.5345
+     ],
+     [
+      -0.1522,
+      -0.0781,
+      -0.1532,
+      -0.4688
+     ]
+    ]
+   }
+  ]
+ },
+ "llm-12": {
+  "title": "Causal Mask",
+  "track": "llm",
+  "code": "import torch\n\ndef causal_attention(scores):\n    T = scores.size(-1)\n    mask = torch.tril(torch.ones(T, T))       # 下三角 = 1\n    scores = scores.masked_fill(mask == 0,\n                                float('-inf'))\n    return torch.softmax(scores, dim=-1)",
+  "cases": [
+   {
+    "name": "T=4",
+    "input": {
+     "T": 4,
+     "seed": 2
+    },
+    "pyArgs": [
+     [
+      [
+       -1.05,
+       -0.16,
+       -1.24,
+       0.97
+      ],
+      [
+       0.87,
+       -1.53,
+       -1.18,
+       -0.11
+      ],
+      [
+       0.1,
+       0.79,
+       0.82,
+       -1.57
+      ],
+      [
+       0.27,
+       1.16,
+       -0.15,
+       -0.21
+      ]
+     ]
+    ],
+    "expected": [
+     [
+      1,
+      0,
+      0,
+      0
+     ],
+     [
+      0.9168,
+      0.0832,
+      0,
+      0
+     ],
+     [
+      0.1981,
+      0.3949,
+      0.407,
+      0
+     ],
+     [
+      0.2123,
+      0.5169,
+      0.1395,
+      0.1313
+     ]
+    ]
+   },
+   {
+    "name": "T=5",
+    "input": {
+     "T": 5,
+     "seed": 6
+    },
+    "pyArgs": [
+     [
+      [
+       -1.05,
+       1.29,
+       1.71,
+       1.56,
+       -0.47
+      ],
+      [
+       -1.57,
+       1.72,
+       -1.45,
+       0.24,
+       1.71
+      ],
+      [
+       0.08,
+       1.39,
+       -0.1,
+       0.38,
+       -0.49
+      ],
+      [
+       -0.75,
+       0.51,
+       -0.39,
+       -1.3,
+       1.86
+      ],
+      [
+       0.69,
+       1.67,
+       -0.31,
+       0.71,
+       0.87
+      ]
+     ]
+    ],
+    "expected": [
+     [
+      1,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0.0359,
+      0.9641,
+      0,
+      0,
+      0
+     ],
+     [
+      0.1805,
+      0.6688,
+      0.1507,
+      0,
+      0
+     ],
+     [
+      0.153,
+      0.5394,
+      0.2193,
+      0.0883,
+      0
+     ],
+     [
+      0.16,
+      0.4263,
+      0.0589,
+      0.1632,
+      0.1916
+     ]
+    ]
+   }
+  ]
+ },
+ "llm-15": {
+  "title": "Multi-Head Attention",
+  "track": "llm",
+  "code": "import torch\nimport math\n\ndef mha(x, W_q, W_k, W_v, W_o, h):\n    B, T, D = x.shape\n    dk = D // h\n    Q = x @ W_q                     # [B,T,D]，K、V 同理\n    Q = Q.view(B, T, h, dk).transpose(1, 2)   # 头维前置\n    K = (x @ W_k).view(B, T, h, dk).transpose(1, 2)\n    V = (x @ W_v).view(B, T, h, dk).transpose(1, 2)\n    scores = Q @ K.transpose(-2, -1) / math.sqrt(dk)\n    attn = torch.softmax(scores, dim=-1)\n    out = attn @ V                  # [B,h,T,dk]\n    out = out.transpose(1, 2).reshape(B, T, D)  # 合并头\n    return out @ W_o",
+  "cases": [
+   {
+    "name": "T=3, D=4, h=2",
+    "input": {
+     "T": 3,
+     "D": 4,
+     "h": 2,
+     "seed": 3
+    },
+    "pyArgs": [
+     [
+      [
+       [
+        -0.53,
+        0.1,
+        0.75,
+        0.56
+       ],
+       [
+        -0.23,
+        0.73,
+        0.27,
+        -0.22
+       ],
+       [
+        -0.93,
+        0.51,
+        -0.68,
+        0.58
+       ]
+      ]
+     ],
+     [
+      [
+       -0.31,
+       0.17,
+       0.07,
+       0.38
+      ],
+      [
+       -0.54,
+       0.14,
+       -0.52,
+       -0.23
+      ],
+      [
+       0.05,
+       0.37,
+       0.13,
+       -0.03
+      ],
+      [
+       0.03,
+       0.23,
+       0.5,
+       -0.15
+      ]
+     ],
+     [
+      [
+       -0.31,
+       0.28,
+       -0.31,
+       0.42
+      ],
+      [
+       0.26,
+       -0.17,
+       0,
+       -0.34
+      ],
+      [
+       -0.54,
+       0.44,
+       -0.52,
+       -0.41
+      ],
+      [
+       0,
+       0.17,
+       -0.42,
+       0.41
+      ]
+     ],
+     [
+      [
+       -0.31,
+       0.39,
+       0.51,
+       0.47
+      ],
+      [
+       -0.14,
+       -0.47,
+       0.52,
+       -0.44
+      ],
+      [
+       0.07,
+       0.51,
+       0.02,
+       0.42
+      ],
+      [
+       -0.03,
+       0.12,
+       -0.15,
+       -0.23
+      ]
+     ],
+     [
+      [
+       -0.31,
+       0.5,
+       0.13,
+       0.51
+      ],
+      [
+       -0.54,
+       0.43,
+       -0.17,
+       -0.54
+      ],
+      [
+       -0.52,
+       0.58,
+       0.57,
+       0.04
+      ],
+      [
+       -0.06,
+       0.06,
+       0.13,
+       0.33
+      ]
+     ],
+     2
+    ],
+    "expected": [
+     [
+      0.214,
+      -0.1626,
+      -0.0444,
+      0.0643
+     ],
+     [
+      0.1936,
+      -0.1469,
+      -0.0467,
+      0.0647
+     ],
+     [
+      0.2267,
+      -0.1715,
+      -0.0294,
+      0.098
+     ]
+    ]
+   },
+   {
+    "name": "T=4, D=4, h=2",
+    "input": {
+     "T": 4,
+     "D": 4,
+     "h": 2,
+     "seed": 8
+    },
+    "pyArgs": [
+     [
+      [
+       [
+        -0.52,
+        -0.99,
+        -0.41,
+        0.93
+       ],
+       [
+        0.43,
+        0.21,
+        0.58,
+        0.94
+       ],
+       [
+        0.15,
+        -0.92,
+        -0.15,
+        -0.57
+       ],
+       [
+        -0.14,
+        0,
+        0.67,
+        -0.51
+       ]
+      ]
+     ],
+     [
+      [
+       -0.31,
+       -0.49,
+       0.58,
+       -0.6
+      ],
+      [
+       -0.14,
+       -0.18,
+       -0.33,
+       0.46
+      ],
+      [
+       -0.5,
+       -0.48,
+       0.46,
+       0.48
+      ],
+      [
+       -0.11,
+       -0.06,
+       -0.53,
+       0.25
+      ]
+     ],
+     [
+      [
+       -0.31,
+       -0.38,
+       0.2,
+       -0.55
+      ],
+      [
+       -0.54,
+       -0.48,
+       0.18,
+       0.36
+      ],
+      [
+       0.11,
+       -0.41,
+       -0.2,
+       0.1
+      ],
+      [
+       -0.14,
+       -0.12,
+       -0.25,
+       -0.39
+      ]
+     ],
+     [
+      [
+       -0.31,
+       -0.27,
+       -0.18,
+       -0.51
+      ],
+      [
+       0.26,
+       0.42,
+       -0.5,
+       0.26
+      ],
+      [
+       -0.48,
+       -0.34,
+       0.35,
+       -0.28
+      ],
+      [
+       -0.17,
+       -0.17,
+       0.02,
+       0.17
+      ]
+     ],
+     [
+      [
+       -0.31,
+       -0.16,
+       -0.56,
+       -0.47
+      ],
+      [
+       -0.14,
+       0.11,
+       0.02,
+       0.16
+      ],
+      [
+       0.13,
+       -0.27,
+       -0.31,
+       0.55
+      ],
+      [
+       -0.2,
+       -0.23,
+       0.3,
+       -0.47
+      ]
+     ],
+     2
+    ],
+    "expected": [
+     [
+      0.146,
+      -0.0564,
+      -0.0236,
+      0.2388
+     ],
+     [
+      0.1877,
+      -0.0325,
+      0.03,
+      0.3011
+     ],
+     [
+      0.1583,
+      -0.0454,
+      -0.0143,
+      0.2594
+     ],
+     [
+      0.177,
+      -0.0344,
+      0.0047,
+      0.2894
+     ]
+    ]
+   }
+  ]
+ },
+ "llm-18": {
+  "title": "GQA 分组查询注意力",
+  "track": "llm",
+  "code": "import torch\nimport math\n\ndef gqa(Q, K, V, h_q, h_kv):\n    # Q: [h_q, T, dk]，K/V: [h_kv, T, dk]\n    rep = h_q // h_kv\n    K = K.repeat_interleave(rep, dim=0)   # rep 个 Q 头共享\n    V = V.repeat_interleave(rep, dim=0)\n    scores = Q @ K.transpose(-2, -1) / Q.size(-1) ** 0.5\n    attn = torch.softmax(scores, dim=-1)\n    return attn @ V",
+  "cases": [
+   {
+    "name": "4 Q 头共享 2 KV 头",
+    "input": {
+     "T": 3,
+     "dk": 2,
+     "h_q": 4,
+     "h_kv": 2,
+     "seed": 5
+    },
+    "pyArgs": {
+     "Q": [
+      [
+       [
+        -0.52,
+        0.46
+       ],
+       [
+        -0.51,
+        0.71
+       ],
+       [
+        0.43,
+        -0.28
+       ]
+      ],
+      [
+       [
+        -0.52,
+        0.46
+       ],
+       [
+        0.55,
+        -0.48
+       ],
+       [
+        -0.9,
+        0.17
+       ]
+      ],
+      [
+       [
+        -0.51,
+        0.46
+       ],
+       [
+        -0.39,
+        0.33
+       ],
+       [
+        -0.24,
+        0.62
+       ]
+      ],
+      [
+       [
+        -0.5,
+        0.45
+       ],
+       [
+        0.68,
+        -0.85
+       ],
+       [
+        0.42,
+        -0.93
+       ]
+      ]
+     ],
+     "K": [
+      [
+       [
+        -0.45,
+        0.6
+       ],
+       [
+        0.43,
+        0.11
+       ],
+       [
+        -0.27,
+        -0.74
+       ]
+      ],
+      [
+       [
+        -0.44,
+        0.6
+       ],
+       [
+        -0.51,
+        0.92
+       ],
+       [
+        0.39,
+        -0.29
+       ]
+      ]
+     ],
+     "V": [
+      [
+       [
+        -0.37,
+        0.75
+       ],
+       [
+        -0.63,
+        -0.49
+       ],
+       [
+        -0.98,
+        0.81
+       ]
+      ],
+      [
+       [
+        -0.36,
+        0.74
+       ],
+       [
+        0.43,
+        0.33
+       ],
+       [
+        -0.32,
+        -0.75
+       ]
+      ]
+     ],
+     "h_q": 4,
+     "h_kv": 2
+    },
+    "expected": [
+     [
+      -0.6083,
+      0.4221
+     ],
+     [
+      -0.5848,
+      0.4192
+     ],
+     [
+      -0.6882,
+      0.3039
+     ],
+     [
+      -0.6083,
+      0.4221
+     ],
+     [
+      -0.7062,
+      0.2996
+     ],
+     [
+      -0.6325,
+      0.4792
+     ],
+     [
+      -0.0179,
+      0.2597
+     ],
+     [
+      -0.0344,
+      0.2251
+     ],
+     [
+      -0.0173,
+      0.2482
+     ],
+     [
+      -0.0192,
+      0.2571
+     ],
+     [
+      -0.1914,
+      -0.2085
+     ],
+     [
+      -0.1843,
+      -0.1763
+     ]
+    ]
+   },
+   {
+    "name": "MQA（全部共享 1 个）",
+    "input": {
+     "T": 3,
+     "dk": 2,
+     "h_q": 4,
+     "h_kv": 1,
+     "seed": 5
+    },
+    "pyArgs": {
+     "Q": [
+      [
+       [
+        -0.52,
+        0.46
+       ],
+       [
+        -0.51,
+        0.71
+       ],
+       [
+        0.43,
+        -0.28
+       ]
+      ],
+      [
+       [
+        -0.52,
+        0.46
+       ],
+       [
+        0.55,
+        -0.48
+       ],
+       [
+        -0.9,
+        0.17
+       ]
+      ],
+      [
+       [
+        -0.51,
+        0.46
+       ],
+       [
+        -0.39,
+        0.33
+       ],
+       [
+        -0.24,
+        0.62
+       ]
+      ],
+      [
+       [
+        -0.5,
+        0.45
+       ],
+       [
+        0.68,
+        -0.85
+       ],
+       [
+        0.42,
+        -0.93
+       ]
+      ]
+     ],
+     "K": [
+      [
+       [
+        -0.45,
+        0.6
+       ],
+       [
+        0.43,
+        0.11
+       ],
+       [
+        -0.27,
+        -0.74
+       ]
+      ]
+     ],
+     "V": [
+      [
+       [
+        -0.37,
+        0.75
+       ],
+       [
+        -0.63,
+        -0.49
+       ],
+       [
+        -0.98,
+        0.81
+       ]
+      ]
+     ],
+     "h_q": 4,
+     "h_kv": 1
+    },
+    "expected": [
+     [
+      -0.6083,
+      0.4221
+     ],
+     [
+      -0.5848,
+      0.4192
+     ],
+     [
+      -0.6882,
+      0.3039
+     ],
+     [
+      -0.6083,
+      0.4221
+     ],
+     [
+      -0.7062,
+      0.2996
+     ],
+     [
+      -0.6325,
+      0.4792
+     ],
+     [
+      -0.6085,
+      0.4206
+     ],
+     [
+      -0.6232,
+      0.4053
+     ],
+     [
+      -0.5981,
+      0.3788
+     ],
+     [
+      -0.6096,
+      0.4193
+     ],
+     [
+      -0.7382,
+      0.3137
+     ],
+     [
+      -0.7482,
+      0.3623
+     ]
+    ]
+   }
+  ]
+ },
+ "llm-20": {
+  "title": "KV Cache 增量解码",
+  "track": "llm",
+  "code": "import torch\nimport math\n\n@torch.no_grad()\ndef generate(K_cache, V_cache, q_t, k_t, v_t):\n    # 每步只算新 token 的 k, v 并追加到缓存\n    K_cache = torch.cat([K_cache, k_t], dim=0)\n    V_cache = torch.cat([V_cache, v_t], dim=0)\n    scores = q_t @ K_cache.T / math.sqrt(q_t.size(-1))\n    attn = torch.softmax(scores, dim=-1)\n    return attn @ V_cache, K_cache, V_cache",
+  "cases": [
+   {
+    "name": "预填充 2 + 解码 3",
+    "input": {
+     "T0": 2,
+     "steps": 3,
+     "d": 4,
+     "seed": 3
+    },
+    "pyArgs": {
+     "K": [
+      [
+       -0.53,
+       0.1,
+       0.75,
+       0.56
+      ],
+      [
+       -0.23,
+       0.73,
+       0.27,
+       -0.22
+      ]
+     ],
+     "V": [
+      [
+       -0.49,
+       -0.83,
+       -0.78,
+       0.26
+      ],
+      [
+       0.41,
+       -0.5,
+       -0.62,
+       -0.61
+      ]
+     ],
+     "steps": [
+      {
+       "q": [
+        [
+         -0.44,
+         0.78,
+         0.86,
+         1
+        ]
+       ],
+       "k": [
+        [
+         -0.36,
+         0.92,
+         -0.2,
+         0.4
+        ]
+       ],
+       "v": [
+        [
+         -0.28,
+         -0.94,
+         0.74,
+         -0.2
+        ]
+       ]
+      },
+      {
+       "q": [
+        [
+         -0.43,
+         0.05,
+         0.45,
+         -0.48
+        ]
+       ],
+       "k": [
+        [
+         -0.35,
+         0.19,
+         -0.61,
+         0.92
+        ]
+       ],
+       "v": [
+        [
+         -0.28,
+         0.33,
+         0.33,
+         0.32
+        ]
+       ]
+      },
+      {
+       "q": [
+        [
+         -0.43,
+         -0.68,
+         0.03,
+         0.03
+        ]
+       ],
+       "k": [
+        [
+         -0.35,
+         -0.54,
+         0.97,
+         -0.56
+        ]
+       ],
+       "v": [
+        [
+         -0.27,
+         -0.4,
+         -0.08,
+         0.84
+        ]
+       ]
+      }
+     ]
+    },
+    "expected": [
+     [
+      -0.181,
+      -0.7782,
+      -0.2372,
+      -0.1233
+     ],
+     [
+      -0.1371,
+      -0.5436,
+      -0.1691,
+      -0.0928
+     ],
+     [
+      -0.2111,
+      -0.4484,
+      -0.1098,
+      0.2081
+     ]
+    ]
+   },
+   {
+    "name": "预填充 1 + 解码 4",
+    "input": {
+     "T0": 1,
+     "steps": 4,
+     "d": 3,
+     "seed": 8
+    },
+    "pyArgs": {
+     "K": [
+      [
+       -0.52,
+       -0.99,
+       -0.41
+      ]
+     ],
+     "V": [
+      [
+       -0.48,
+       0.08,
+       0.07
+      ]
+     ],
+     "steps": [
+      {
+       "q": [
+        [
+         -0.44,
+         0.42,
+         0.12
+        ]
+       ],
+       "k": [
+        [
+         -0.36,
+         0.56,
+         -0.94
+        ]
+       ],
+       "v": [
+        [
+         -0.28,
+         0.7,
+         0.01
+        ]
+       ]
+      },
+      {
+       "q": [
+        [
+         -0.43,
+         -0.31,
+         -0.29
+        ]
+       ],
+       "k": [
+        [
+         -0.36,
+         -0.17,
+         0.65
+        ]
+       ],
+       "v": [
+        [
+         -0.28,
+         -0.03,
+         -0.41
+        ]
+       ]
+      },
+      {
+       "q": [
+        [
+         -0.43,
+         0.96,
+         -0.71
+        ]
+       ],
+       "k": [
+        [
+         -0.35,
+         -0.9,
+         0.24
+        ]
+       ],
+       "v": [
+        [
+         -0.27,
+         -0.76,
+         -0.82
+        ]
+       ]
+      },
+      {
+       "q": [
+        [
+         -0.42,
+         0.23,
+         0.88
+        ]
+       ],
+       "k": [
+        [
+         -0.34,
+         0.37,
+         -0.18
+        ]
+       ],
+       "v": [
+        [
+         -0.27,
+         0.51,
+         0.76
+        ]
+       ]
+      }
+     ]
+    },
+    "expected": [
+     [
+      -0.3652,
+      0.4359,
+      0.0356
+     ],
+     [
+      -0.3603,
+      0.2474,
+      -0.0831
+     ],
+     [
+      -0.3145,
+      0.258,
+      -0.1681
+     ],
+     [
+      -0.3072,
+      0.045,
+      -0.1258
+     ]
+    ]
+   }
+  ]
+ },
+ "llm-23": {
+  "title": "FlashAttention 分块计算",
+  "track": "llm",
+  "code": "import torch\nimport math\n\ndef flash_row(q, K, V, B):\n    m, l = float('-inf'), 0.0      # 运行 max / 归一和\n    acc = torch.zeros(q.size(-1))\n    for s in range(0, K.size(0), B):\n        Kb, Vb = K[s:s + B], V[s:s + B]      # 载一块\n        sj = q @ Kb.T / math.sqrt(q.size(-1))\n        m_new = max(m, sj.max())\n        alpha = math.exp(m - m_new)          # 旧量缩放\n        beta = torch.exp(sj - m_new)         # 新块权重\n        l = l * alpha + beta.sum()\n        acc = acc * alpha + beta @ Vb\n        m = m_new\n    return acc / l",
+  "cases": [
+   {
+    "name": "K 分 3 块",
+    "input": {
+     "T": 6,
+     "d": 3,
+     "B": 2,
+     "seed": 4
+    },
+    "pyArgs": [
+     [
+      -0.52,
+      0.28,
+      0.12
+     ],
+     [
+      [
+       -0.52,
+       -0.45,
+       -0.3
+      ],
+      [
+       -0.85,
+       0.43,
+       0.69
+      ],
+      [
+       -0.83,
+       0.44,
+       -0.79
+      ],
+      [
+       -0.57,
+       0.58,
+       -0.46
+      ],
+      [
+       -0.28,
+       -0.29,
+       0.04
+      ],
+      [
+       0.28,
+       -0.22,
+       -0.04
+      ]
+     ],
+     [
+      [
+       -0.51,
+       0.64,
+       -0.08
+      ],
+      [
+       -0.41,
+       0.43,
+       -0.33
+      ],
+      [
+       0.34,
+       -0.57,
+       -0.69
+      ],
+      [
+       0.12,
+       0.02,
+       -0.24
+      ],
+      [
+       -0.56,
+       -0.87,
+       0.78
+      ],
+      [
+       -0.12,
+       -0.38,
+       0.14
+      ]
+     ],
+     2
+    ],
+    "expected": [
+     -0.175809,
+     -0.093378,
+     -0.118623
+    ]
+   },
+   {
+    "name": "K 分 2 块",
+    "input": {
+     "T": 4,
+     "d": 4,
+     "B": 2,
+     "seed": 9
+    },
+    "pyArgs": [
+     [
+      -0.52,
+      -0.81,
+      0.96,
+      -1
+     ],
+     [
+      [
+       -0.52,
+       0.46,
+       0.55,
+       -0.48
+      ],
+      [
+       -0.9,
+       0.17,
+       -0.52,
+       -0.4
+      ],
+      [
+       0.29,
+       0,
+       -0.89,
+       0.39
+      ],
+      [
+       -0.51,
+       -0.77,
+       0.32,
+       0.94
+      ]
+     ],
+     [
+      [
+       -0.51,
+       -0.45,
+       0.77,
+       -0.04
+      ],
+      [
+       -0.91,
+       -0.86,
+       0.65,
+       0.59
+      ],
+      [
+       0.4,
+       0.69,
+       0.56,
+       0.61
+      ],
+      [
+       -0.79,
+       0.65,
+       -0.94,
+       0.54
+      ]
+     ],
+     2
+    ],
+    "expected": [
+     -0.582584,
+     -0.136467,
+     0.265851,
+     0.350314
+    ]
+   }
+  ]
+ },
+ "llm-27": {
+  "title": "正弦位置编码",
+  "track": "llm",
+  "code": "import torch\nimport math\n\ndef sinusoidal_pe(T, d, base=10000):\n    P = torch.zeros(T, d)\n    pos = torch.arange(T).unsqueeze(1)        # [T,1]\n    i = torch.arange(0, d, 2)                 # [d/2]\n    omega = base ** (-i / d)                  # 频率随维衰减\n    P[:, 0::2] = torch.sin(pos * omega)       # 偶数维 sin\n    P[:, 1::2] = torch.cos(pos * omega)       # 奇数维 cos\n    return P",
+  "cases": [
+   {
+    "name": "T=6, d=6",
+    "input": {
+     "T": 6,
+     "d": 6
+    },
+    "pyArgs": null,
+    "expected": [
+     [
+      0,
+      1,
+      0,
+      1,
+      0,
+      1
+     ],
+     [
+      0.8415,
+      0.5403,
+      0.0464,
+      0.9989,
+      0.0022,
+      1
+     ],
+     [
+      0.9093,
+      -0.4161,
+      0.0927,
+      0.9957,
+      0.0043,
+      1
+     ],
+     [
+      0.1411,
+      -0.99,
+      0.1388,
+      0.9903,
+      0.0065,
+      1
+     ],
+     [
+      -0.7568,
+      -0.6536,
+      0.1846,
+      0.9828,
+      0.0086,
+      1
+     ],
+     [
+      -0.9589,
+      0.2837,
+      0.23,
+      0.9732,
+      0.0108,
+      0.9999
+     ]
+    ]
+   },
+   {
+    "name": "T=8, d=4",
+    "input": {
+     "T": 8,
+     "d": 4
+    },
+    "pyArgs": null,
+    "expected": [
+     [
+      0,
+      1,
+      0,
+      1
+     ],
+     [
+      0.8415,
+      0.5403,
+      0.01,
+      1
+     ],
+     [
+      0.9093,
+      -0.4161,
+      0.02,
+      0.9998
+     ],
+     [
+      0.1411,
+      -0.99,
+      0.03,
+      0.9996
+     ],
+     [
+      -0.7568,
+      -0.6536,
+      0.04,
+      0.9992
+     ],
+     [
+      -0.9589,
+      0.2837,
+      0.05,
+      0.9988
+     ],
+     [
+      -0.2794,
+      0.9602,
+      0.06,
+      0.9982
+     ],
+     [
+      0.657,
+      0.7539,
+      0.0699,
+      0.9976
+     ]
+    ]
+   }
+  ]
+ },
+ "llm-29": {
+  "title": "RoPE 旋转位置编码",
+  "track": "llm",
+  "code": "import torch\nimport math\n\ndef rope(x, base=10000):\n    T, d = x.shape                      # d 为偶数\n    out = torch.zeros_like(x)\n    for pos in range(T):\n        for i in range(0, d, 2):\n            theta = pos * base ** (-i / d)\n            c, s = math.cos(theta), math.sin(theta)\n            a, b = x[pos, i], x[pos, i + 1]\n            out[pos, i]     = a * c - b * s\n            out[pos, i + 1] = a * s + b * c\n    return out",
+  "cases": [
+   {
+    "name": "T=4, d=4",
+    "input": {
+     "T": 4,
+     "d": 4,
+     "seed": 3
+    },
+    "pyArgs": [
+     [
+      [
+       -0.53,
+       0.1,
+       0.75,
+       0.56
+      ],
+      [
+       -0.23,
+       0.73,
+       0.27,
+       -0.22
+      ],
+      [
+       -0.93,
+       0.51,
+       -0.68,
+       0.58
+      ],
+      [
+       0.09,
+       0.48,
+       0.38,
+       0.83
+      ]
+     ]
+    ],
+    "expected": [
+     [
+      -0.53,
+      0.1,
+      0.75,
+      0.56
+     ],
+     [
+      -0.7385,
+      0.2009,
+      0.2722,
+      -0.2173
+     ],
+     [
+      -0.0767,
+      -1.0579,
+      -0.6915,
+      0.5663
+     ],
+     [
+      -0.1568,
+      -0.4625,
+      0.3549,
+      0.841
+     ]
+    ]
+   },
+   {
+    "name": "T=5, d=6",
+    "input": {
+     "T": 5,
+     "d": 6,
+     "seed": 8
+    },
+    "pyArgs": [
+     [
+      [
+       -0.52,
+       -0.99,
+       -0.41,
+       0.93,
+       0.43,
+       0.21
+      ],
+      [
+       0.58,
+       0.94,
+       0.15,
+       -0.92,
+       -0.15,
+       -0.57
+      ],
+      [
+       -0.14,
+       0,
+       0.67,
+       -0.51,
+       0.87,
+       -0.13
+      ],
+      [
+       0.55,
+       0.48,
+       -0.89,
+       -0.91,
+       0.52,
+       0.64
+      ],
+      [
+       0.9,
+       0.6,
+       0.56,
+       0.5,
+       0.86,
+       -0.86
+      ]
+     ]
+    ],
+    "expected": [
+     [
+      -0.52,
+      -0.99,
+      -0.41,
+      0.93,
+      0.43,
+      0.21
+     ],
+     [
+      -0.4776,
+      0.9959,
+      0.1925,
+      -0.912,
+      -0.1488,
+      -0.5703
+     ],
+     [
+      0.0583,
+      -0.1273,
+      0.7144,
+      -0.4457,
+      0.8706,
+      -0.1263
+     ],
+     [
+      -0.6122,
+      -0.3976,
+      -0.7551,
+      -1.0247,
+      0.5159,
+      0.6433
+     ],
+     [
+      -0.1342,
+      -1.0733,
+      0.4581,
+      0.5948,
+      0.8674,
+      -0.8526
+     ]
+    ]
+   }
+  ]
+ },
+ "llm-35": {
+  "title": "MoE Top-k 路由",
+  "track": "llm",
+  "code": "import torch\n\ndef moe_forward(x, W_gate, experts, k):\n    logits = x @ W_gate                    # [T, E]\n    probs = torch.softmax(logits, dim=-1)\n    topv, topi = probs.topk(k, dim=-1)     # 选 k 个专家\n    w = topv / topv.sum(dim=-1, keepdim=True)   # 重新归一化\n    out = torch.zeros_like(x)\n    for t in range(x.size(0)):\n        for j in range(k):\n            e = topi[t, j]\n            out[t] += w[t, j] * experts[e](x[t])\n    return out",
+  "cases": [
+   {
+    "name": "T=3, E=4, k=2",
+    "input": {
+     "T": 3,
+     "d": 3,
+     "E": 4,
+     "k": 2,
+     "seed": 5
+    },
+    "pyArgs": {
+     "x": [
+      [
+       -0.52,
+       0.46,
+       -0.51
+      ],
+      [
+       0.71,
+       0.43,
+       -0.28
+      ],
+      [
+       0,
+       -0.56,
+       -0.9
+      ]
+     ],
+     "Wg": [
+      [
+       -0.52,
+       -0.27,
+       -0.93,
+       -0.78
+      ],
+      [
+       -0.24,
+       0.19,
+       0.03,
+       0.27
+      ],
+      [
+       0.22,
+       -0.46,
+       -0.52,
+       0.91
+      ]
+     ],
+     "k": 2,
+     "experts": [
+      [
+       [
+        -0.51,
+        0.09,
+        0.87
+       ],
+       [
+        0.19,
+        -0.91,
+        -0.37
+       ],
+       [
+        -0.76,
+        0.09,
+        -0.55
+       ]
+      ],
+      [
+       [
+        -0.51,
+        0.27,
+        0.24
+       ],
+       [
+        0.26,
+        0.42,
+        -0.88
+       ],
+       [
+        0.1,
+        -0.08,
+        0.47
+       ]
+      ],
+      [
+       [
+        -0.51,
+        0.46,
+        -0.39
+       ],
+       [
+        0.33,
+        -0.24,
+        0.62
+       ],
+       [
+        0.96,
+        -0.25,
+        -0.51
+       ]
+      ],
+      [
+       [
+        -0.51,
+        0.64,
+        0.98
+       ],
+       [
+        0.41,
+        -0.91,
+        0.12
+       ],
+       [
+        -0.17,
+        -0.42,
+        0.5
+       ]
+      ]
+     ]
+    },
+    "expected": [
+     [
+      0.1003,
+      -0.0878,
+      0.1024
+     ],
+     [
+      -0.3568,
+      0.3569,
+      -0.1636
+     ],
+     [
+      -0.6713,
+      0.1168,
+      0.0923
+     ]
+    ]
+   },
+   {
+    "name": "T=4, E=4, k=1",
+    "input": {
+     "T": 4,
+     "d": 3,
+     "E": 4,
+     "k": 1,
+     "seed": 9
+    },
+    "pyArgs": {
+     "x": [
+      [
+       -0.52,
+       -0.81,
+       0.96
+      ],
+      [
+       -1,
+       -0.24,
+       -0.3
+      ],
+      [
+       -0.55,
+       0.77,
+       -0.83
+      ],
+      [
+       -0.8,
+       0.76,
+       0.8
+      ]
+     ],
+     "Wg": [
+      [
+       -0.52,
+       0.46,
+       0.55,
+       -0.48
+      ],
+      [
+       -0.9,
+       0.17,
+       -0.52,
+       -0.4
+      ],
+      [
+       0.29,
+       0,
+       -0.89,
+       0.39
+      ]
+     ],
+     "k": 1,
+     "experts": [
+      [
+       [
+        -0.51,
+        0.82,
+        0.35
+       ],
+       [
+        0.48,
+        0.42,
+        -0.39
+       ],
+       [
+        0.69,
+        -0.58,
+        -0.48
+       ]
+      ],
+      [
+       [
+        -0.5,
+        1,
+        -0.28
+       ],
+       [
+        0.56,
+        -0.24,
+        -0.89
+       ],
+       [
+        -0.45,
+        -0.75,
+        0.54
+       ]
+      ],
+      [
+       [
+        -0.5,
+        -0.82,
+        -0.91
+       ],
+       [
+        0.63,
+        -0.91,
+        0.6
+       ],
+       [
+        0.41,
+        -0.92,
+        -0.44
+       ]
+      ],
+      [
+       [
+        -0.5,
+        -0.64,
+        0.46
+       ],
+       [
+        0.7,
+        0.42,
+        0.1
+       ],
+       [
+        -0.73,
+        0.91,
+        0.57
+       ]
+      ]
+     ]
+    },
+    "expected": [
+     [
+      0.5388,
+      -1.3234,
+      -0.3269
+     ],
+     [
+      0.1878,
+      -0.7468,
+      -0.1124
+     ],
+     [
+      0.4198,
+      0.5139,
+      1.3277
+     ],
+     [
+      0.348,
+      1.5592,
+      0.164
+     ]
+    ]
+   }
+  ]
+ },
+ "llm-45": {
+  "title": "BPE 训练",
+  "track": "llm",
+  "code": "def bpe_train(corpus, num_merges):\n    # corpus: {word: count}，先拆成单字符\n    words = {tuple(w): c for w, c in corpus.items()}\n    merges = []\n    for _ in range(num_merges):\n        pairs = count_pairs(words)      # 统计相邻对频次\n        best = min(pairs, key=lambda p: (-pairs[p], p))\n        words = merge(words, best)      # 相邻该对都合并\n        merges.append(best)\n    return merges",
+  "cases": [
+   {
+    "name": "经典例子",
+    "input": {
+     "corpus": {
+      "low": 5,
+      "lower": 2,
+      "lowest": 2,
+      "wider": 3
+     },
+     "merges": 4
+    },
+    "pyArgs": null,
+    "expected": [
+     "lo",
+     "low",
+     "er",
+     "der"
+    ]
+   },
+   {
+    "name": "短一点",
+    "input": {
+     "corpus": {
+      "hug": 3,
+      "pug": 2,
+      "pun": 2,
+      "bun": 4
+     },
+     "merges": 3
+    },
+    "pyArgs": null,
+    "expected": [
+     "un",
+     "ug",
+     "bun"
+    ]
+   }
+  ]
+ },
+ "llm-51": {
+  "title": "Temperature 采样",
+  "track": "llm",
+  "code": "import torch\n\ndef sample(logits, temperature, u):\n    p = torch.softmax(logits / temperature, dim=-1)\n    cum = 0.0\n    for i, pi in enumerate(p):\n        cum += pi\n        if u < cum:\n            return i          # 按累积分布采样\n    return len(p) - 1",
+  "cases": [
+   {
+    "name": "常规",
+    "input": {
+     "logits": [
+      3,
+      2,
+      1,
+      0.5
+     ],
+     "u": 0.7
+    },
+    "pyArgs": null,
+    "expected": {
+     "1": "是",
+     "2": "是",
+     "0.5": "的"
+    }
+   },
+   {
+    "name": "差距小",
+    "input": {
+     "logits": [
+      1.2,
+      1,
+      0.9,
+      0.8,
+      0.5
+     ],
+     "u": 0.5
+    },
+    "pyArgs": null,
+    "expected": {
+     "1": "在",
+     "2": "在",
+     "0.5": "是"
+    }
+   }
+  ]
+ },
+ "llm-53": {
+  "title": "Top-p 采样",
+  "track": "llm",
+  "code": "import torch\n\ndef top_p_sample(logits, p, u):\n    probs = torch.softmax(logits, dim=-1)\n    sorted_p, idx = probs.sort(descending=True)\n    cum = sorted_p.cumsum(-1)\n    keep = cum - sorted_p <= p        # 保留 ≤p 的核\n    sorted_p = sorted_p * keep\n    sorted_p = sorted_p / sorted_p.sum()   # 重新归一化\n    cum = sorted_p.cumsum(-1)\n    j = (cum < u).sum()               # u 落在哪个 token\n    return idx[j]",
+  "cases": [
+   {
+    "name": "p = 0.9",
+    "input": {
+     "logits": [
+      3,
+      2,
+      1,
+      0.5,
+      0.1,
+      -0.5
+     ],
+     "p": 0.9,
+     "u": 0.75
+    },
+    "pyArgs": null,
+    "expected": 1
+   },
+   {
+    "name": "p = 0.7",
+    "input": {
+     "logits": [
+      2,
+      1.8,
+      1.5,
+      1
+     ],
+     "p": 0.7,
+     "u": 0.6
+    },
+    "pyArgs": null,
+    "expected": 1
+   }
+  ]
+ },
+ "llm-56": {
+  "title": "Beam Search",
+  "track": "llm",
+  "code": "import math\nimport torch\n\ndef beam_search(logp_fn, beam_size, max_len):\n    beams = [([], 0.0)]              # (前缀, 累积logp)\n    for _ in range(max_len):\n        cand = []\n        for seq, s in beams:\n            for tok, lp in enumerate(logp_fn(seq)):\n                cand.append((seq + [tok], s + lp))\n        cand.sort(key=lambda x: x[1], reverse=True)\n        beams = cand[:beam_size]     # 只留 top-k 个前缀\n    return max(beams, key=lambda x: x[1])[0]",
+  "cases": [
+   {
+    "name": "beam=2, 3 步",
+    "input": {
+     "V": 5,
+     "beam": 2,
+     "len": 3,
+     "seed": 19
+    },
+    "pyArgs": {
+     "table": {
+      "0": [
+       -1.288,
+       -1.292,
+       -1.296,
+       -1.3,
+       -1.304
+      ],
+      "1": [
+       -1.4120000000000001,
+       -1.4160000000000001,
+       -1.4200000000000002,
+       -1.4240000000000002,
+       -1.4280000000000002
+      ],
+      "2": [
+       -1.536,
+       -1.54,
+       -1.544,
+       -1.548,
+       -1.552
+      ],
+      "3": [
+       -1.6600000000000001,
+       -1.6640000000000001,
+       -1.6680000000000001,
+       -1.6720000000000002,
+       -1.6760000000000002
+      ],
+      "4": [
+       -1.784,
+       -1.788,
+       -1.792,
+       -1.796,
+       -1.8
+      ],
+      "": [
+       -2.484,
+       -2.488,
+       -2.492,
+       -2.496,
+       -2.5
+      ],
+      "0,0": [
+       -0.21200000000000002,
+       -0.21600000000000003,
+       -0.22,
+       -0.224,
+       -0.228
+      ],
+      "0,1": [
+       -0.33599999999999997,
+       -0.33999999999999997,
+       -0.344,
+       -0.348,
+       -0.352
+      ],
+      "0,2": [
+       -0.45999999999999996,
+       -0.46399999999999997,
+       -0.46799999999999997,
+       -0.472,
+       -0.476
+      ],
+      "0,3": [
+       -0.584,
+       -0.588,
+       -0.592,
+       -0.596,
+       -0.6
+      ],
+      "0,4": [
+       -0.708,
+       -0.712,
+       -0.716,
+       -0.72,
+       -0.724
+      ],
+      "1,0": [
+       -4.056,
+       -4.06,
+       -4.064,
+       -4.068,
+       -4.072
+      ],
+      "1,1": [
+       -0.18,
+       -0.184,
+       -0.188,
+       -0.192,
+       -0.196
+      ],
+      "1,2": [
+       -0.304,
+       -0.308,
+       -0.312,
+       -0.316,
+       -0.32
+      ],
+      "1,3": [
+       -0.42800000000000005,
+       -0.43200000000000005,
+       -0.43600000000000005,
+       -0.44000000000000006,
+       -0.44399999999999995
+      ],
+      "1,4": [
+       -0.552,
+       -0.556,
+       -0.56,
+       -0.5640000000000001,
+       -0.5680000000000001
+      ],
+      "2,0": [
+       -3.9,
+       -3.904,
+       -3.908,
+       -3.912,
+       -3.916
+      ],
+      "2,1": [
+       -4.024,
+       -4.028,
+       -4.032,
+       -4.036,
+       -4.04
+      ],
+      "2,2": [
+       -0.14800000000000002,
+       -0.152,
+       -0.156,
+       -0.16,
+       -0.164
+      ],
+      "2,3": [
+       -0.272,
+       -0.276,
+       -0.28,
+       -0.28400000000000003,
+       -0.28800000000000003
+      ],
+      "2,4": [
+       -0.396,
+       -0.4,
+       -0.404,
+       -0.40800000000000003,
+       -0.41200000000000003
+      ],
+      "3,0": [
+       -3.744,
+       -3.748,
+       -3.7520000000000002,
+       -3.7560000000000002,
+       -3.7600000000000002
+      ],
+      "3,1": [
+       -3.868,
+       -3.872,
+       -3.876,
+       -3.88,
+       -3.884
+      ],
+      "3,2": [
+       -3.992,
+       -3.996,
+       -4,
+       -4.004,
+       -4.008
+      ],
+      "3,3": [
+       -0.116,
+       -0.12000000000000001,
+       -0.124,
+       -0.128,
+       -0.132
+      ],
+      "3,4": [
+       -0.24000000000000002,
+       -0.244,
+       -0.248,
+       -0.252,
+       -0.256
+      ],
+      "4,0": [
+       -3.588,
+       -3.592,
+       -3.596,
+       -3.6,
+       -3.604
+      ],
+      "4,1": [
+       -3.712,
+       -3.716,
+       -3.72,
+       -3.724,
+       -3.728
+      ],
+      "4,2": [
+       -3.8360000000000003,
+       -3.8400000000000003,
+       -3.8440000000000003,
+       -3.8480000000000003,
+       -3.852
+      ],
+      "4,3": [
+       -3.96,
+       -3.964,
+       -3.968,
+       -3.972,
+       -3.976
+      ],
+      "4,4": [
+       -4.084,
+       -4.088,
+       -4.092,
+       -4.096,
+       -0.1
+      ]
+     },
+     "beam": 2,
+     "len": 3
+    },
+    "expected": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "beam=1（=贪心）",
+    "input": {
+     "V": 5,
+     "beam": 1,
+     "len": 3,
+     "seed": 19
+    },
+    "pyArgs": {
+     "table": {
+      "0": [
+       -1.288,
+       -1.292,
+       -1.296,
+       -1.3,
+       -1.304
+      ],
+      "1": [
+       -1.4120000000000001,
+       -1.4160000000000001,
+       -1.4200000000000002,
+       -1.4240000000000002,
+       -1.4280000000000002
+      ],
+      "2": [
+       -1.536,
+       -1.54,
+       -1.544,
+       -1.548,
+       -1.552
+      ],
+      "3": [
+       -1.6600000000000001,
+       -1.6640000000000001,
+       -1.6680000000000001,
+       -1.6720000000000002,
+       -1.6760000000000002
+      ],
+      "4": [
+       -1.784,
+       -1.788,
+       -1.792,
+       -1.796,
+       -1.8
+      ],
+      "": [
+       -2.484,
+       -2.488,
+       -2.492,
+       -2.496,
+       -2.5
+      ],
+      "0,0": [
+       -0.21200000000000002,
+       -0.21600000000000003,
+       -0.22,
+       -0.224,
+       -0.228
+      ],
+      "0,1": [
+       -0.33599999999999997,
+       -0.33999999999999997,
+       -0.344,
+       -0.348,
+       -0.352
+      ],
+      "0,2": [
+       -0.45999999999999996,
+       -0.46399999999999997,
+       -0.46799999999999997,
+       -0.472,
+       -0.476
+      ],
+      "0,3": [
+       -0.584,
+       -0.588,
+       -0.592,
+       -0.596,
+       -0.6
+      ],
+      "0,4": [
+       -0.708,
+       -0.712,
+       -0.716,
+       -0.72,
+       -0.724
+      ],
+      "1,0": [
+       -4.056,
+       -4.06,
+       -4.064,
+       -4.068,
+       -4.072
+      ],
+      "1,1": [
+       -0.18,
+       -0.184,
+       -0.188,
+       -0.192,
+       -0.196
+      ],
+      "1,2": [
+       -0.304,
+       -0.308,
+       -0.312,
+       -0.316,
+       -0.32
+      ],
+      "1,3": [
+       -0.42800000000000005,
+       -0.43200000000000005,
+       -0.43600000000000005,
+       -0.44000000000000006,
+       -0.44399999999999995
+      ],
+      "1,4": [
+       -0.552,
+       -0.556,
+       -0.56,
+       -0.5640000000000001,
+       -0.5680000000000001
+      ],
+      "2,0": [
+       -3.9,
+       -3.904,
+       -3.908,
+       -3.912,
+       -3.916
+      ],
+      "2,1": [
+       -4.024,
+       -4.028,
+       -4.032,
+       -4.036,
+       -4.04
+      ],
+      "2,2": [
+       -0.14800000000000002,
+       -0.152,
+       -0.156,
+       -0.16,
+       -0.164
+      ],
+      "2,3": [
+       -0.272,
+       -0.276,
+       -0.28,
+       -0.28400000000000003,
+       -0.28800000000000003
+      ],
+      "2,4": [
+       -0.396,
+       -0.4,
+       -0.404,
+       -0.40800000000000003,
+       -0.41200000000000003
+      ],
+      "3,0": [
+       -3.744,
+       -3.748,
+       -3.7520000000000002,
+       -3.7560000000000002,
+       -3.7600000000000002
+      ],
+      "3,1": [
+       -3.868,
+       -3.872,
+       -3.876,
+       -3.88,
+       -3.884
+      ],
+      "3,2": [
+       -3.992,
+       -3.996,
+       -4,
+       -4.004,
+       -4.008
+      ],
+      "3,3": [
+       -0.116,
+       -0.12000000000000001,
+       -0.124,
+       -0.128,
+       -0.132
+      ],
+      "3,4": [
+       -0.24000000000000002,
+       -0.244,
+       -0.248,
+       -0.252,
+       -0.256
+      ],
+      "4,0": [
+       -3.588,
+       -3.592,
+       -3.596,
+       -3.6,
+       -3.604
+      ],
+      "4,1": [
+       -3.712,
+       -3.716,
+       -3.72,
+       -3.724,
+       -3.728
+      ],
+      "4,2": [
+       -3.8360000000000003,
+       -3.8400000000000003,
+       -3.8440000000000003,
+       -3.8480000000000003,
+       -3.852
+      ],
+      "4,3": [
+       -3.96,
+       -3.964,
+       -3.968,
+       -3.972,
+       -3.976
+      ],
+      "4,4": [
+       -4.084,
+       -4.088,
+       -4.092,
+       -4.096,
+       -0.1
+      ]
+     },
+     "beam": 1,
+     "len": 3
+    },
+    "expected": [
+     0,
+     0,
+     0
+    ]
+   }
+  ]
+ },
+ "llm-74": {
+  "title": "LoRA Linear",
+  "track": "llm",
+  "code": "import torch\nimport torch.nn as nn\n\nclass LoRALinear(nn.Module):\n    def __init__(self, W, r, alpha):\n        super().__init__()\n        self.W = W                   # 冻结权重\n        self.A = nn.Parameter(torch.randn(r, W.size(1)))\n        self.B = nn.Parameter(torch.zeros(W.size(0), r))\n        self.s = alpha / r\n    def forward(self, x):\n        return (x @ self.W.T\n                + self.s * x @ self.A.T @ self.B.T)\n    def merge(self):\n        return self.W + self.s * self.B @ self.A   # 零延迟",
+  "cases": [
+   {
+    "name": "d=4, r=2",
+    "input": {
+     "d": 4,
+     "r": 2,
+     "alpha": 4,
+     "seed": 3
+    },
+    "pyArgs": {
+     "W": [
+      [
+       -0.53,
+       0.1,
+       0.75,
+       0.56
+      ],
+      [
+       -0.23,
+       0.73,
+       0.27,
+       -0.22
+      ],
+      [
+       -0.93,
+       0.51,
+       -0.68,
+       0.58
+      ],
+      [
+       0.09,
+       0.48,
+       0.38,
+       0.83
+      ]
+     ],
+     "A": [
+      [
+       -0.05,
+       0.03,
+       0.01,
+       0.06
+      ],
+      [
+       -0.09,
+       0.02,
+       -0.09,
+       -0.04
+      ]
+     ],
+     "Bt": [
+      [
+       -0.16,
+       0.14
+      ],
+      [
+       -0.15,
+       0.21
+      ],
+      [
+       0.13,
+       -0.08
+      ],
+      [
+       0,
+       -0.17
+      ]
+     ],
+     "x": [
+      [
+       -0.52,
+       0.65,
+       0.86,
+       0.78
+      ]
+     ],
+     "r": 2,
+     "alpha": 4
+    },
+    "expected": [
+     1.3764,
+     0.6039,
+     0.7167,
+     1.256
+    ]
+   },
+   {
+    "name": "d=6, r=2",
+    "input": {
+     "d": 6,
+     "r": 2,
+     "alpha": 8,
+     "seed": 7
+    },
+    "pyArgs": {
+     "W": [
+      [
+       -0.52,
+       0.83,
+       0.22,
+       0.85,
+       -0.9,
+       0.71
+      ],
+      [
+       -0.28,
+       -0.89,
+       -0.86,
+       0.97,
+       0.95,
+       0.06
+      ],
+      [
+       -0.1,
+       0.1,
+       0.21,
+       0.55,
+       0.56,
+       -0.16
+      ],
+      [
+       -0.05,
+       0.7,
+       -0.28,
+       -0.04,
+       -0.82,
+       0.5
+      ],
+      [
+       0.67,
+       -0.28,
+       -0.64,
+       0.96,
+       -0.76,
+       -0.09
+      ],
+      [
+       -0.09,
+       -0.78,
+       -0.77,
+       0.24,
+       0.55,
+       -0.83
+      ]
+     ],
+     "A": [
+      [
+       -0.05,
+       -0.1,
+       -0.04,
+       0.09,
+       0.04,
+       0.02
+      ],
+      [
+       0.06,
+       0.09,
+       0.02,
+       -0.09,
+       -0.01,
+       -0.06
+      ]
+     ],
+     "Bt": [
+      [
+       -0.16,
+       -0.24
+      ],
+      [
+       0.29,
+       -0.3
+      ],
+      [
+       -0.07,
+       -0.09
+      ],
+      [
+       -0.17,
+       0.23
+      ],
+      [
+       -0.25,
+       -0.24
+      ],
+      [
+       0.23,
+       0.24
+      ]
+     ],
+     "x": [
+      [
+       -0.52,
+       -0.63,
+       0.33,
+       -0.92,
+       -0.9,
+       -0.8
+      ]
+     ],
+     "r": 2,
+     "alpha": 8
+    },
+    "expected": [
+     -0.7383,
+     -1.5115,
+     -0.8282,
+     -0.0387,
+     -0.5076,
+     0.2342
+    ]
+   }
+  ]
+ },
+ "llm-82": {
+  "title": "DPO Loss",
+  "track": "llm",
+  "code": "import torch\nimport torch.nn.functional as F\n\ndef dpo_loss(lp_pol_c, lp_pol_r,\n             lp_ref_c, lp_ref_r, beta):\n    # 每条：policy 相对 ref 对 chosen / rejected 的偏好差\n    logit = beta * ((lp_pol_c - lp_ref_c)\n                    - (lp_pol_r - lp_ref_r))\n    return -F.logsigmoid(logit).mean()",
+  "cases": [
+   {
+    "name": "3 对样本, β=0.1",
+    "input": {
+     "beta": 0.1,
+     "lp_pol_c": [
+      -1.2,
+      -0.8,
+      -2
+     ],
+     "lp_pol_r": [
+      -2.5,
+      -2,
+      -3
+     ],
+     "lp_ref_c": [
+      -1.5,
+      -1,
+      -2
+     ],
+     "lp_ref_r": [
+      -2,
+      -1.8,
+      -2.5
+     ]
+    },
+    "pyArgs": null,
+    "expected": 0.665251
+   },
+   {
+    "name": "β=1.0（更强约束）",
+    "input": {
+     "beta": 1,
+     "lp_pol_c": [
+      -1.2,
+      -0.8
+     ],
+     "lp_pol_r": [
+      -2.5,
+      -2
+     ],
+     "lp_ref_c": [
+      -1.5,
+      -1
+     ],
+     "lp_ref_r": [
+      -2,
+      -1.8
+     ]
+    },
+    "pyArgs": null,
+    "expected": 0.442058
+   }
+  ]
+ },
+ "llm-85": {
+  "title": "PPO Clip 目标",
+  "track": "llm",
+  "code": "import torch\n\ndef ppo_clip_loss(lp_new, lp_old, adv, eps=0.2):\n    ratio = torch.exp(lp_new - lp_old)      # 新旧概率比\n    s1 = ratio * adv\n    s2 = torch.clamp(ratio, 1 - eps, 1 + eps) * adv\n    loss = -torch.min(s1, s2).mean()\n    return loss",
+  "cases": [
+   {
+    "name": "混合情形",
+    "input": {
+     "eps": 0.2,
+     "lp_new": [
+      0.1,
+      -0.5,
+      2,
+      -1
+     ],
+     "lp_old": [
+      0,
+      0,
+      1,
+      0
+     ],
+     "adv": [
+      1,
+      1,
+      -1.5,
+      2
+     ]
+    },
+    "pyArgs": null,
+    "expected": 0.407491
+   },
+   {
+    "name": "全在界内",
+    "input": {
+     "eps": 0.2,
+     "lp_new": [
+      0.1,
+      -0.1,
+      0.05
+     ],
+     "lp_old": [
+      0,
+      0,
+      0
+     ],
+     "adv": [
+      1,
+      -1,
+      0.5
+     ]
+    },
+    "pyArgs": null,
+    "expected": -0.24199
+   }
+  ]
+ },
+ "llm-89": {
+  "title": "GRPO 组内优势",
+  "track": "llm",
+  "code": "import torch\n\ndef grpo(rewards, lp_new, lp_old,\n         lp_ref, eps=0.2, beta=0.04):\n    mean = rewards.mean()\n    std = rewards.std(unbiased=False)\n    adv = (rewards - mean) / (std + 1e-8)    # 组内相对优势\n    ratio = torch.exp(lp_new - lp_old)\n    s1 = ratio * adv\n    s2 = torch.clamp(ratio, 1 - eps, 1 + eps) * adv\n    d = lp_ref - lp_new\n    kl = d.exp() - d - 1                     # k3 估计\n    loss = -(torch.min(s1, s2) - beta * kl).mean()\n    return adv, loss",
+  "cases": [
+   {
+    "name": "G=4",
+    "input": {
+     "rewards": [
+      3,
+      1,
+      0.5,
+      0.2
+     ],
+     "lp_new": [
+      0.1,
+      -0.1,
+      0.05,
+      0.2
+     ],
+     "lp_old": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "lp_ref": [
+      0.05,
+      -0.05,
+      0,
+      0.1
+     ],
+     "eps": 0.2,
+     "beta": 0.04
+    },
+    "pyArgs": null,
+    "expected": {
+     "adv": [
+      1.6717,
+      -0.1603,
+      -0.6183,
+      -0.8931
+     ],
+     "loss": 0.009677
+    }
+   },
+   {
+    "name": "G=5",
+    "input": {
+     "rewards": [
+      2,
+      2,
+      1,
+      0,
+      0
+     ],
+     "lp_new": [
+      0.1,
+      0.1,
+      -0.1,
+      0,
+      0.05
+     ],
+     "lp_old": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "lp_ref": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "eps": 0.2,
+     "beta": 0.04
+    },
+    "pyArgs": null,
+    "expected": {
+     "adv": [
+      1.118,
+      1.118,
+      0,
+      -1.118,
+      -1.118
+     ],
+     "loss": -0.035441
+    }
+   }
+  ]
+ }
+}

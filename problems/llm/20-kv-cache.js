@@ -90,4 +90,13 @@ export default {
     }
     return roundM(outs, 4);
   },
+  pyArgs({ T0, steps, d, seed = 1 }) {
+    return {
+      K: randMatrix(T0, d, seed), V: randMatrix(T0, d, seed + 50),
+      steps: Array.from({ length: steps }, (_, t) => {
+        const cur = T0 + t;
+        return { q: [randMatrix(1, d, seed + 100 + cur * 7)[0]], k: [randMatrix(1, d, seed + 200 + cur * 7)[0]], v: [randMatrix(1, d, seed + 300 + cur * 7)[0]] };
+      }),
+    };
+  },
 };

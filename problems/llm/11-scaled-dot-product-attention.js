@@ -7,7 +7,8 @@ def attention(Q, K, V, mask=None):
     d_k = Q.size(-1)
     scores = Q @ K.transpose(-2, -1) / math.sqrt(d_k)
     if mask is not None:
-        scores = scores.masked_fill(mask == 0, float('-inf'))
+        scores = scores.masked_fill(mask == 0,
+                                      float('-inf'))
     weights = torch.softmax(scores, dim=-1)
     return weights @ V`;
 
@@ -75,20 +76,20 @@ export default {
     if (causal) {
       for (let i = 0; i < T; i++) for (let j = 0; j < T; j++) S[i][j] = masked[i][j];
       const colors = {}; for (let i = 0; i < T; i++) for (let j = i + 1; j < T; j++) colors[`${i},${j}`] = 'bad';
-      rec.step(8, '因果 mask：token i 只能看到自己和前面的 token，所以把 j > i 的位置填成 <code>-inf</code>，softmax 之后这些位置的权重就是 0。', [sMat(colors)]);
+      rec.step([8, 9], '因果 mask：token i 只能看到自己和前面的 token，所以把 j > i 的位置填成 <code>-inf</code>，softmax 之后这些位置的权重就是 0。', [sMat(colors)]);
     }
     for (let i = 0; i < T; i++) {
       for (let j = 0; j < T; j++) W[i][j] = weights[i][j];
       const colors = {}; for (let j = 0; j < T; j++) colors[`${i},${j}`] = 'cur';
-      rec.step(9, `对第 ${i + 1} 行做 softmax（先减掉这一行的最大值，防止 exp 溢出）。得到 ${tk[i]} 分给各 token 的注意力：${weights[i].map((w, j) => `${tk[j]} ${round(w)}`).join('，')}，加起来等于 1。`, [sMat({ ...Object.fromEntries(tk.map((_, j) => [`${i},${j}`, 'cmp'])) }), wMat(colors)]);
+      rec.step(10, `对第 ${i + 1} 行做 softmax（先减掉这一行的最大值，防止 exp 溢出）。得到 ${tk[i]} 分给各 token 的注意力：${weights[i].map((w, j) => `${tk[j]} ${round(w)}`).join('，')}，加起来等于 1。`, [sMat({ ...Object.fromEntries(tk.map((_, j) => [`${i},${j}`, 'cmp'])) }), wMat(colors)]);
     }
     for (let i = 0; i < T; i++) {
       for (let j = 0; j < d; j++) O[i][j] = out[i][j];
       const colors = {}; for (let j = 0; j < d; j++) colors[`${i},${j}`] = 'ok';
       const top = weights[i].indexOf(Math.max(...weights[i]));
-      rec.step(10, `输出第 ${i + 1} 行 = Σ_j weights[${tk[i]}, j] · V[j]。权重最大的是 ${tk[top]}（${round(weights[i][top])}），所以这一行的结果最接近 V[${tk[top]}]。`, [wMat(Object.fromEntries(tk.map((_, j) => [`${i},${j}`, 'cmp']))), { type: 'row', id: 'vo', items: [{ ...M('V2', 'V', V), rowColors: { [top]: 'hl' } }, { op: '→' }, { ...oMat(colors), label: '输出' }] }]);
+      rec.step(11, `输出第 ${i + 1} 行 = Σ_j weights[${tk[i]}, j] · V[j]。权重最大的是 ${tk[top]}（${round(weights[i][top])}），所以这一行的结果最接近 V[${tk[top]}]。`, [wMat(Object.fromEntries(tk.map((_, j) => [`${i},${j}`, 'cmp']))), { type: 'row', id: 'vo', items: [{ ...M('V2', 'V', V), rowColors: { [top]: 'hl' } }, { op: '→' }, { ...oMat(colors), label: '输出' }] }]);
     }
-    rec.step(10, '完成。每个 token 的输出都是所有 V 的加权平均，权重由它和其他 token 的 Q·K 相似度决定。', [wMat(), { type: 'row', id: 'vo', items: [{ ...M('V2', 'V', V) }, { op: '→' }, { ...oMat(), label: '输出' }] }]);
+    rec.step(11, '完成。每个 token 的输出都是所有 V 的加权平均，权重由它和其他 token 的 Q·K 相似度决定。', [wMat(), { type: 'row', id: 'vo', items: [{ ...M('V2', 'V', V) }, { op: '→' }, { ...oMat(), label: '输出' }] }]);
     return { steps: rec.steps, result: roundM(out, 4) };
   },
   solve({ T, d, seed = 1, causal = false }) {
@@ -103,5 +104,9 @@ export default {
       out.push(Array.from({ length: d }, (_, c) => w.reduce((a, x, j) => a + x * V[j][c], 0)));
     }
     return roundM(out, 4);
+  },
+  pyArgs({ T, d, seed = 1, causal = false }) {
+    const mask = causal ? Array.from({ length: T }, (_, i) => Array.from({ length: T }, (_, j) => (j <= i ? 1 : 0))) : null;
+    return [randMatrix(T, d, seed), randMatrix(T, d, seed + 7), randMatrix(T, d, seed + 13), mask];
   },
 };

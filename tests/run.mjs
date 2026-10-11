@@ -17,6 +17,12 @@ for (const p of problems) {
   for (const k of required) if (p[k] === undefined) errs.push(`missing ${k}`);
   if (ids.has(p.id)) errs.push('duplicate id'); ids.add(p.id);
   const nLines = (p.code || '').split('\n').length;
+  // display width: CJK/full-width count as 2 columns; code panel must fit 60
+  (p.code || '').split('\n').forEach((line, i) => {
+    let w = 0;
+    for (const ch of line) w += ch.codePointAt(0) > 0x2e7f ? 2 : 1;
+    if (w > 60) errs.push(`code line ${i + 1} too wide (${w} > 60): ${line.trim().slice(0, 30)}…`);
+  });
   for (const pre of p.presets || []) {
     let out;
     try { out = p.run(JSON.parse(JSON.stringify(pre.input))); } catch (e) { errs.push(`${pre.name}: run threw ${e.stack}`); continue; }

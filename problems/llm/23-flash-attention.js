@@ -89,4 +89,7 @@ export default {
     const w = softmax(K.map((k) => q.reduce((a, x, j) => a + x * k[j], 0) / Math.sqrt(d)));
     return V[0].map((_, j) => round(w.reduce((a, x, i) => a + x * V[i][j], 0), 6));
   },
+  pyArgs({ T, d, B, seed = 1 }) {
+    return [randMatrix(1, d, seed)[0], randMatrix(T, d, seed + 7), randMatrix(T, d, seed + 13), B];
+  },
 };

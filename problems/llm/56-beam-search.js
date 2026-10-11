@@ -4,7 +4,7 @@ const code = `import math
 import torch
 
 def beam_search(logp_fn, beam_size, max_len):
-    beams = [([], 0.0)]              # (已选 token, 累积 log 概率)
+    beams = [([], 0.0)]              # (前缀, 累积logp)
     for _ in range(max_len):
         cand = []
         for seq, s in beams:
@@ -82,5 +82,17 @@ export default {
     };
     dfs([], 0);
     return best.seq;
+  },
+  // full log-prob table for every prefix the beam can reach, so Python's
+  // logp_fn(seq) can be replayed deterministically
+  pyArgs({ V, beam, len, seed = 3 }) {
+    const table = {};
+    const rec = (seq) => {
+      if (seq.length >= len) return;
+      table[seq.join(',')] = Array.from({ length: V }, (_, t) => lp(seq, t, seed));
+      for (let t = 0; t < V; t++) rec([...seq, t]);
+    };
+    rec([]);
+    return { table, beam, len };
   },
 };
