@@ -6,14 +6,15 @@ import torch.nn as nn
 class LoRALinear(nn.Module):
     def __init__(self, W, r, alpha):
         super().__init__()
-        self.W = W                   # 冻结的预训练权重 [d_out, d_in]
+        self.W = W                   # 冻结权重
         self.A = nn.Parameter(torch.randn(r, W.size(1)) * 0.01)
-        self.B = nn.Parameter(torch.zeros(W.size(0), r))  # B 初始为 0
+        self.B = nn.Parameter(torch.zeros(W.size(0), r))  # B 初始 0
         self.s = alpha / r
     def forward(self, x):
-        return x @ self.W.T + self.s * (x @ self.A.T @ self.B.T)
+        return (x @ self.W.T
+                + self.s * x @ self.A.T @ self.B.T)
     def merge(self):
-        return self.W + self.s * self.B @ self.A   # 推理时合并，零额外延迟`;
+        return self.W + self.s * self.B @ self.A   # 零延迟`;
 
 export default {
   id: 'llm-74', track: 'llm', num: 74, title: 'LoRA Linear', category: '微调',
@@ -59,23 +60,23 @@ export default {
         { op: '=' },
         { label: 'ΔW = 0', values: Array.from({ length: dout }, () => Array(din).fill(0)) }] }]);
     const y0 = matmul(x, transpose(W))[0];
-    rec.step(11, `前向：<code>y = x·Wᵀ + s·(x·Aᵀ·Bᵀ)</code>。B=0 时第二项为 0，y = x·Wᵀ = [${y0.map((v) => round(v, 2)).join(', ')}]。`,
+    rec.step([12, 13], `前向：<code>y = x·Wᵀ + s·(x·Aᵀ·Bᵀ)</code>。B=0 时第二项为 0，y = x·Wᵀ = [${y0.map((v) => round(v, 2)).join(', ')}]。`,
       [{ type: 'vars', id: 'v', items: { 'y（B=0 时）': `[${y0.map((v) => round(v, 2)).join(', ')}]`, '第二项': '0' } }]);
     const BA = matmul(Bt, A);
     const xA = matmul(x, transpose(A));
     const xAB = matmul(xA, transpose(Bt))[0];
     const y = y0.map((v, j) => v + s * xAB[j]);
-    rec.step(11, `训练几步后 B 学到值：ΔW = s·B·A，低秩增量矩阵（秩 ≤ ${r}）。前向时旁路 <code>s·(xAᵀ)Bᵀ</code> 把增量加进输出。`,
+    rec.step([12, 13], `训练几步后 B 学到值：ΔW = s·B·A，低秩增量矩阵（秩 ≤ ${r}）。前向时旁路 <code>s·(xAᵀ)Bᵀ</code> 把增量加进输出。`,
       [{ type: 'row', id: 'dw', items: [
         { label: 'B（训练后）', values: roundM(Bt), rowLabels: Array.from({ length: dout }, (_, i) => `o${i}`), colLabels: Array.from({ length: r }, (_, j) => `r${j}`), heat: 'diverge' },
         { op: '×' },
         { label: 'A', values: roundM(A), rowLabels: Array.from({ length: r }, (_, j) => `r${j}`), colLabels: dl, heat: 'diverge' },
         { op: '=' },
         { label: `ΔW = s·BA（s = ${alpha}/${r} = ${s}）`, values: roundM(BA.map((rr) => rr.map((v) => v * s))), rowLabels: Array.from({ length: dout }, (_, i) => `o${i}`), colLabels: dl, heat: 'diverge' }] }]);
-    rec.step(11, `<code>y = x·Wᵀ + ${s}·(x·Aᵀ·Bᵀ)</code> = [${y.map((v) => round(v, 2)).join(', ')}]。增量部分 = [${xAB.map((v) => round(v * s, 2)).join(', ')}]。`,
+    rec.step([12, 13], `<code>y = x·Wᵀ + ${s}·(x·Aᵀ·Bᵀ)</code> = [${y.map((v) => round(v, 2)).join(', ')}]。增量部分 = [${xAB.map((v) => round(v * s, 2)).join(', ')}]。`,
       [{ type: 'vars', id: 'v', items: { 'x·Wᵀ': `[${y0.map((v) => round(v, 2)).join(', ')}]`, 's·xAᵀBᵀ': `[${xAB.map((v) => round(v * s, 2)).join(', ')}]`, y: `[${y.map((v) => round(v, 2)).join(', ')}]` } }]);
     const merged = W.map((rr, i) => rr.map((v, j) => v + s * BA[i][j]));
-    rec.step(12, `<code>merge()</code>：推理部署时把 <code>W + s·BA</code> 合成单个矩阵——与原始 Linear 完全相同的前向，<b>零额外延迟</b>。`,
+    rec.step([14, 15], `<code>merge()</code>：推理部署时把 <code>W + s·BA</code> 合成单个矩阵——与原始 Linear 完全相同的前向，<b>零额外延迟</b>。`,
       [{ type: 'matrix', id: 'm', label: '合并后 W′ = W + s·BA', values: roundM(merged), rowLabels: Array.from({ length: dout }, (_, i) => `o${i}`), colLabels: dl, heat: 'diverge' }]);
     return { steps: rec.steps, result: roundM([y], 4)[0] };
   },

@@ -3,9 +3,11 @@ import { recorder, round } from '../../js/util.js';
 const code = `import torch
 import torch.nn.functional as F
 
-def dpo_loss(lp_pol_c, lp_pol_r, lp_ref_c, lp_ref_r, beta):
+def dpo_loss(lp_pol_c, lp_pol_r,
+             lp_ref_c, lp_ref_r, beta):
     # 每条：policy 相对 ref 对 chosen / rejected 的偏好差
-    logit = beta * ((lp_pol_c - lp_ref_c) - (lp_pol_r - lp_ref_r))
+    logit = beta * ((lp_pol_c - lp_ref_c)
+                    - (lp_pol_r - lp_ref_r))
     return -F.logsigmoid(logit).mean()`;
 
 export default {
@@ -41,7 +43,7 @@ export default {
       { type: 'matrix', id: 'd', label: '每对样本的计算', values: rows.map((r) => r.slice(0, 7)), rowLabels: rows.map((_, k) => `pair${k}`), colLabels: ['π_c−ref_c', 'π_r−ref_r', '差', 'logit=β·差', 'loss', '', ''], colors: i >= 0 ? Object.fromEntries([0, 1, 2, 3, 4].map((j) => [`${i},${j}`, 'cur'])) : {} },
       { type: 'vars', id: 'v', items: { β: beta, ...vars } },
     ];
-    rec.step(5, `${n} 对偏好样本，β = ${beta}。先算每个 log-ratio：<code>π/ref</code> 在 chosen 和 rejected 上各偏了多少。`, scene());
+    rec.step([4, 5], `${n} 对偏好样本，β = ${beta}。先算每个 log-ratio：<code>π/ref</code> 在 chosen 和 rejected 上各偏了多少。`, scene());
     let total = 0;
     for (let i = 0; i < n; i++) {
       const dc = inp.lp_pol_c[i] - inp.lp_ref_c[i];
@@ -52,10 +54,10 @@ export default {
       rows.push([round(dc, 3), round(dr, 3), round(diff, 3), round(logit, 3), round(loss, 4), '', '']);
       total += loss;
       rec.step(6, `pair${i}：chosen log-ratio = ${round(inp.lp_pol_c[i])} − (${round(inp.lp_ref_c[i])}) = <code>${round(dc, 3)}</code>；rejected = <code>${round(dr, 3)}</code>。policy 在 chosen 上比 ref 高 ${round(dc - dr, 3)}。`, scene(i));
-      rec.step(6, `<code>logit = ${beta} × (${round(dc, 3)} − ${round(dr, 3)}) = ${round(logit, 3)}</code> → loss = −logσ(${round(logit, 3)}) = <code>${round(loss, 4)}</code>。logit 越大（越偏好 chosen）loss 越小。`, scene(i));
+      rec.step([7, 8], `<code>logit = ${beta} × (${round(dc, 3)} − ${round(dr, 3)}) = ${round(logit, 3)}</code> → loss = −logσ(${round(logit, 3)}) = <code>${round(loss, 4)}</code>。logit 越大（越偏好 chosen）loss 越小。`, scene(i));
     }
     const mean = total / n;
-    rec.step(7, `<code>loss = mean = ${round(mean, 4)}</code>。梯度会推高 π(chosen)、压低 π(rejected)——但都以 ref 为锚，β 越大锚越紧。`, scene(-1, { 'mean loss': round(mean, 5) }));
+    rec.step(9, `<code>loss = mean = ${round(mean, 4)}</code>。梯度会推高 π(chosen)、压低 π(rejected)——但都以 ref 为锚，β 越大锚越紧。`, scene(-1, { 'mean loss': round(mean, 5) }));
     return { steps: rec.steps, result: round(mean, 6) };
   },
   solve(inp) {

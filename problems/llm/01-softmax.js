@@ -21,8 +21,8 @@ export default {
   ],
   complexity: '时间 O(n)，空间 O(1)（就地）',
   presets: [
-    { name: '普通 logits', input: { x: [2.0, 1.0, 0.1, -1.0] } },
     { name: '大 logits（朴素实现溢出）', input: { x: [1000, 1001, 1002] } },
+    { name: '普通 logits', input: { x: [2.0, 1.0, 0.1, -1.0] } },
   ],
   validate(inp) {
     if (!Array.isArray(inp.x) || inp.x.some((v) => typeof v !== 'number' || !isFinite(v))) return 'x 需要是数字数组';
@@ -46,7 +46,12 @@ export default {
         [arr('n', 'naive exp(x)（溢出！）', naive.map((v) => (isFinite(v) ? v : '∞')), x.map(() => 'bad')), arr('l', 'logits x', x)]);
     }
     rec.step(4, `每个元素减 max：<code>x − ${m}</code> = [${sub.map((v) => round(v, 2)).join(', ')}]。最大值变 0，其余全为负。`,
-      [{ type: 'row', id: 'sub', items: [arr('l2', 'x', x), { op: '−' }, { label: 'max', values: [[m]] }, { op: '→' }, arr('r', 'x − max', sub.map((v) => round(v, 2)), sub.map((v, i) => (v === 0 ? 'hl' : '')))] }]);
+      [{ type: 'row', id: 'sub', items: [
+        { label: 'x', values: [x] },
+        { op: '−' },
+        { label: 'max', values: [[m]] },
+        { op: '→' },
+        { label: 'x − max', values: [sub.map((v) => round(v, 2))], colors: Object.fromEntries(sub.map((v, i) => [`0,${i}`, v === 0 ? 'hl' : ''])) }] }]);
     rec.step(5, `<code>e = exp(x − max)</code> = [${e.map((v) => round(v, 3)).join(', ')}]。现在所有值 ∈ (0, 1]，不可能溢出。`,
       [arr('e', 'e = exp(x − max)', e.map((v) => round(v, 3)))]);
     rec.step(6, `<code>sum(e) = ${round(s, 4)}</code>，每个元素除以它。`,

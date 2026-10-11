@@ -10,8 +10,9 @@ def rope(x, base=10000):
         for i in range(0, d, 2):
             theta = pos * base ** (-i / d)
             c, s = math.cos(theta), math.sin(theta)
-            out[pos, i]     = x[pos, i] * c - x[pos, i + 1] * s
-            out[pos, i + 1] = x[pos, i] * s + x[pos, i + 1] * c
+            a, b = x[pos, i], x[pos, i + 1]
+            out[pos, i]     = a * c - b * s
+            out[pos, i + 1] = a * s + b * c
     return out`;
 
 export default {
@@ -57,11 +58,11 @@ export default {
     for (let pos = 0; pos < T; pos++) {
       for (let i = 0; i < d; i += 2) {
         const th = pos * Math.pow(10000, -i / d);
-        rec.step([6, 7], `pos=${pos}，维度对 (d${i}, d${i + 1})：<code>θ = ${pos} × 10000^(−${i}/${d}) = ${round(th, 4)}</code> rad ≈ ${round((th * 180) / Math.PI, 1)}°${pos === 0 ? '（pos=0 不旋转）' : ''}。`,
+        rec.step([8, 10], `pos=${pos}，维度对 (d${i}, d${i + 1})：<code>θ = ${pos} × 10000^(−${i}/${d}) = ${round(th, 4)}</code> rad ≈ ${round((th * 180) / Math.PI, 1)}°${pos === 0 ? '（pos=0 不旋转）' : ''}。`,
           [xMat({ [pos]: 'cur' }), { type: 'vars', id: 'v', items: { pos, 维度对: `(d${i},d${i + 1})`, 'θ(rad)': round(th, 4), cosθ: round(Math.cos(th), 3), sinθ: round(Math.sin(th), 3) } }]);
       }
       O[pos] = out[pos];
-      rec.step([8, 9], `pos=${pos} 整行旋转完：<code>[${x[pos].map((v) => round(v, 2)).join(', ')}]</code> → <code>[${out[pos].map((v) => round(v, 2)).join(', ')}]</code>。`,
+      rec.step([11, 13], `pos=${pos} 整行旋转完：<code>[${x[pos].map((v) => round(v, 2)).join(', ')}]</code> → <code>[${out[pos].map((v) => round(v, 2)).join(', ')}]</code>。`,
         [xMat({ [pos]: 'ok' }), oMat({ [`${pos},0`]: 'ok', ...Object.fromEntries(dl.map((_, j) => [`${pos},${j}`, 'ok'])) })]);
     }
     // relative property demo
@@ -73,7 +74,7 @@ export default {
     const q1 = Math.min(T - 1 - gap, p1 + (T - 1 - gap > p1 ? 1 : -1));
     const q2 = q1 + gap;
     const d2 = dot(out[q1], out[q2]);
-    rec.step(10, `验证相对性：<code>RoPE(x${p1}) · RoPE(x${p2}) = ${round(d1, 4)}</code>；另一对相同间隔的位置 (${q1},${q2}) 得 <code>${round(d2, 4)}</code>。若 x 各行相同则完全相等——实际中点积只由间隔 ${gap} 和原向量决定，绝对位置已被「旋转差」消掉。`,
+    rec.step(14, `验证相对性：<code>RoPE(x${p1}) · RoPE(x${p2}) = ${round(d1, 4)}</code>；另一对相同间隔的位置 (${q1},${q2}) 得 <code>${round(d2, 4)}</code>。若 x 各行相同则完全相等——实际中点积只由间隔 ${gap} 和原向量决定，绝对位置已被「旋转差」消掉。`,
       [oMat({ [`${p1},0`]: 'cur', [`${p2},0`]: 'cmp', [`${q1},0`]: 'hl', [`${q2},0`]: 'hl' })]);
     return { steps: rec.steps, result: roundM(out, 4) };
   },

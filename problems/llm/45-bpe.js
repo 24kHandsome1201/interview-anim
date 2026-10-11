@@ -7,7 +7,7 @@ const code = `def bpe_train(corpus, num_merges):
     for _ in range(num_merges):
         pairs = count_pairs(words)      # 统计相邻对频次（按词频加权）
         best = max(pairs, key=pairs.get)
-        words = merge(words, best)      # 语料中所有相邻的 best 都合并
+        words = merge(words, best)      # 所有相邻的 best 都合并
         merges.append(best)
     return merges`;
 

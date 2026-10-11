@@ -3,7 +3,8 @@ import { recorder, randMatrix, round, roundM } from '../../js/util.js';
 const code = `import torch
 
 def rms_norm(x, weight, eps=1e-6):
-    rms = torch.sqrt(x.pow(2).mean(dim=-1, keepdim=True) + eps)
+    ms = x.pow(2).mean(dim=-1, keepdim=True)
+    rms = torch.sqrt(ms + eps)
     return x / rms * weight`;
 
 export default {
@@ -41,13 +42,13 @@ export default {
     rec.step(4, `输入 [${T}, ${d}]，weight = [${w.join(', ')}]。注意 RMSNorm <b>不减均值</b>——直接算均方根。`,
       [{ type: 'row', id: 'in', items: [xMat(), { label: 'weight γ', values: [w] }] }]);
     for (let i = 0; i < T; i++) {
-      rec.step(4, `第 ${i + 1} 行：<code>rms = √(Σx²/${d} + eps) = √(${round(x[i].reduce((a, v) => a + v * v, 0) / d, 4)}) = ${round(rms[i], 3)}</code>。对比 LayerNorm：这里没有 mean 减法。`,
+      rec.step([4, 5], `第 ${i + 1} 行：<code>rms = √(Σx²/${d} + eps) = √(${round(x[i].reduce((a, v) => a + v * v, 0) / d, 4)}) = ${round(rms[i], 3)}</code>。对比 LayerNorm：这里没有 mean 减法。`,
         [xMat(Object.fromEntries(dl.map((_, j) => [`${i},${j}`, 'cur']))), { type: 'vars', id: 'v', items: { [`rms[${i}]`]: round(rms[i], 4) } }]);
       O[i] = out[i];
-      rec.step(5, `<code>out[${i}] = x / ${round(rms[i], 3)} × weight</code> = [${out[i].map((v) => round(v, 2)).join(', ')}]。缩放后该行的均方根 ≈ 1，再逐特征乘 weight。`,
+      rec.step(6, `<code>out[${i}] = x / ${round(rms[i], 3)} × weight</code> = [${out[i].map((v) => round(v, 2)).join(', ')}]。缩放后该行的均方根 ≈ 1，再逐特征乘 weight。`,
         [oMat(Object.fromEntries(dl.map((_, j) => [`${i},${j}`, 'ok'])))]);
     }
-    rec.step(5, '完成。每行只做缩放不做平移——少一步中心化，计算更省，这就是 LLaMA 系模型选它的原因。', [oMat()]);
+    rec.step(6, '完成。每行只做缩放不做平移——少一步中心化，计算更省，这就是 LLaMA 系模型选它的原因。', [oMat()]);
     return { steps: rec.steps, result: roundM(out, 4) };
   },
   solve({ T, d, seed = 1 }) {

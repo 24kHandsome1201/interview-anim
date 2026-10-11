@@ -6,9 +6,9 @@ import math
 def gqa(Q, K, V, h_q, h_kv):
     # Q: [h_q, T, dk]，K/V: [h_kv, T, dk]
     rep = h_q // h_kv
-    K = K.repeat_interleave(rep, dim=0)   # 每个 KV 头服务 rep 个 Q 头
+    K = K.repeat_interleave(rep, dim=0)   # rep 个 Q 头共享
     V = V.repeat_interleave(rep, dim=0)
-    scores = Q @ K.transpose(-2, -1) / math.sqrt(Q.size(-1))
+    scores = Q @ K.transpose(-2, -1) / Q.size(-1) ** 0.5
     attn = torch.softmax(scores, dim=-1)
     return attn @ V`;
 

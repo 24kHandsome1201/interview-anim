@@ -7,9 +7,9 @@ def sinusoidal_pe(T, d, base=10000):
     P = torch.zeros(T, d)
     pos = torch.arange(T).unsqueeze(1)        # [T,1]
     i = torch.arange(0, d, 2)                 # [d/2]
-    omega = base ** (-i / d)                  # 频率随维度指数下降
-    P[:, 0::2] = torch.sin(pos * omega)       # 偶数维
-    P[:, 1::2] = torch.cos(pos * omega)       # 奇数维
+    omega = base ** (-i / d)                  # 频率随维衰减
+    P[:, 0::2] = torch.sin(pos * omega)       # 偶数维 sin
+    P[:, 1::2] = torch.cos(pos * omega)       # 奇数维 cos
     return P`;
 
 export default {

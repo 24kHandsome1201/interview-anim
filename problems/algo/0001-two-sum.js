@@ -20,8 +20,8 @@ export default {
   ],
   complexity: '时间 O(n)，空间 O(n)',
   presets: [
-    { name: '示例 1', input: { nums: [2, 7, 11, 15], target: 9 } },
-    { name: '示例 2', input: { nums: [3, 2, 4], target: 6 } },
+    { name: '示例 1', input: { nums: [3, 2, 4, 7, 1], target: 6 } },
+    { name: '示例 2', input: { nums: [2, 7, 11, 15], target: 9 } },
   ],
   validate(inp) {
     if (!Array.isArray(inp.nums) || inp.nums.some((x) => !Number.isInteger(x))) return 'nums 需要是整数数组';

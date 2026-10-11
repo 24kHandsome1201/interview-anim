@@ -2,12 +2,12 @@ import { recorder, parseTree, treeLayer } from '../../js/util.js';
 
 const code = `def lowestCommonAncestor(root, p, q):
     if root in (None, p, q):
-        return root              # 空 / 命中目标节点，直接上报
+        return root              # 空 / 命中，直接上报
     left = lowestCommonAncestor(root.left, p, q)
     right = lowestCommonAncestor(root.right, p, q)
     if left and right:
-        return root              # p、q 分处两侧 -> 当前节点即 LCA
-    return left or right         # 把非空的一边继续上报`;
+        return root              # p、q 分居两侧 -> 即 LCA
+    return left or right         # 非空一边继续上报`;
 
 export default {
   id: 'lc-236', track: 'algo', num: 236, slug: 'lowest-common-ancestor-of-a-binary-tree', title: '二叉树的最近公共祖先', category: '二叉树', difficulty: '中等',

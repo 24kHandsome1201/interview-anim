@@ -9,7 +9,7 @@ def levelOrder(root):
     q = deque([root])
     while q:
         level = []
-        for _ in range(len(q)):   # 关键：先锁死这一层的节点数
+        for _ in range(len(q)):   # 锁死本层节点数
             node = q.popleft()
             level.append(node.val)
             if node.left:

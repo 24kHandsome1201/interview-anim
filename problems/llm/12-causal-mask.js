@@ -5,7 +5,8 @@ const code = `import torch
 def causal_attention(scores):
     T = scores.size(-1)
     mask = torch.tril(torch.ones(T, T))       # 下三角 = 1
-    scores = scores.masked_fill(mask == 0, float('-inf'))
+    scores = scores.masked_fill(mask == 0,
+                                float('-inf'))
     return torch.softmax(scores, dim=-1)`;
 
 const TOKENS = ['我', '爱', '大', '模', '型', '！'];
@@ -48,14 +49,14 @@ export default {
       rec.step(5, `第 ${i + 1} 行（token「${tk[i]}」）：tril 保留 <code>j ≤ ${i}</code> 的位置为 1，右边全 0。`, [maskMat(), sMat(scores, 'scores')]);
     }
     for (let i = 0; i < T; i++) for (let j = 0; j < T; j++) M[i][j] = masked[i][j];
-    rec.step(6, `<code>masked_fill(mask == 0, −inf)</code>：所有上三角位置变成 <code>−∞</code>。这些位置等会儿 softmax 出来就是 0。`, [sMat(masked, 'masked scores（红 = −∞）', Object.fromEntries(Array.from({ length: T }, (_, i) => Array.from({ length: T }, (_, j) => (j > i ? [`${i},${j}`, 'bad'] : null))).flat().filter(Boolean)))]);
+    rec.step([6, 7], `<code>masked_fill(mask == 0, −inf)</code>：所有上三角位置变成 <code>−∞</code>。这些位置等会儿 softmax 出来就是 0。`, [sMat(masked, 'masked scores（红 = −∞）', Object.fromEntries(Array.from({ length: T }, (_, i) => Array.from({ length: T }, (_, j) => (j > i ? [`${i},${j}`, 'bad'] : null))).flat().filter(Boolean)))]);
     for (let i = 0; i < T; i++) {
       for (let j = 0; j < T; j++) W[i][j] = attn[i][j];
       const colors = {}; for (let j = 0; j <= i; j++) colors[`${i},${j}`] = 'cur';
-      rec.step(7, `对第 ${i + 1} 行 softmax：「${tk[i]}」只能分配权重给 ${tk.slice(0, i + 1).join('、')}（和为 1），后面全是 0。`,
+      rec.step(8, `对第 ${i + 1} 行 softmax：「${tk[i]}」只能分配权重给 ${tk.slice(0, i + 1).join('、')}（和为 1），后面全是 0。`,
         [{ type: 'matrix', id: 'w', label: 'attn = softmax(masked scores)（每行和为 1）', values: W.map((r) => r.map((v) => (typeof v === 'number' ? round(v) : v))), rowLabels: tk, colLabels: tk, heat: true, colors }]);
     }
-    rec.step(7, '完成。这个下三角权重矩阵保证：token i 的输出只依赖 ≤ i 的 token——自回归训练/推理的因果性就是这么实现的。', [{ type: 'matrix', id: 'w', label: 'attn', values: roundM(attn), rowLabels: tk, colLabels: tk, heat: true }]);
+    rec.step(8, '完成。这个下三角权重矩阵保证：token i 的输出只依赖 ≤ i 的 token——自回归训练/推理的因果性就是这么实现的。', [{ type: 'matrix', id: 'w', label: 'attn', values: roundM(attn), rowLabels: tk, colLabels: tk, heat: true }]);
     return { steps: rec.steps, result: roundM(attn, 4) };
   },
   solve({ T, seed = 1 }) {

@@ -7,13 +7,13 @@ def mha(x, W_q, W_k, W_v, W_o, h):
     B, T, D = x.shape
     dk = D // h
     Q = x @ W_q                     # [B,T,D]，K、V 同理
-    Q = Q.view(B, T, h, dk).transpose(1, 2)   # -> [B,h,T,dk]
+    Q = Q.view(B, T, h, dk).transpose(1, 2)   # 头维前置
     K = (x @ W_k).view(B, T, h, dk).transpose(1, 2)
     V = (x @ W_v).view(B, T, h, dk).transpose(1, 2)
     scores = Q @ K.transpose(-2, -1) / math.sqrt(dk)   # [B,h,T,T]
     attn = torch.softmax(scores, dim=-1)
     out = attn @ V                  # [B,h,T,dk]
-    out = out.transpose(1, 2).reshape(B, T, D)  # concat heads
+    out = out.transpose(1, 2).reshape(B, T, D)  # 合并头 heads
     return out @ W_o`;
 
 export default {

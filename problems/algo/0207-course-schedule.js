@@ -8,7 +8,8 @@ def canFinish(numCourses, prerequisites):
     for a, b in prerequisites:      # 先修 b 才能修 a：b -> a
         g[b].append(a)
         indeg[a] += 1
-    q = deque(i for i in range(numCourses) if indeg[i] == 0)
+    q = deque(i for i in range(numCourses)
+              if indeg[i] == 0)
     done = 0
     while q:
         u = q.popleft()
