@@ -6,12 +6,12 @@ def grpo(rewards, lp_new, lp_old,
          lp_ref, eps=0.2, beta=0.04):
     mean = rewards.mean()
     std = rewards.std(unbiased=False)
-    adv = (rewards - mean) / (std + 1e-8)    # 组内相对优势
+    adv = (rewards - mean) / (std + 1e-8)  # 优势
     ratio = torch.exp(lp_new - lp_old)
     s1 = ratio * adv
     s2 = torch.clamp(ratio, 1 - eps, 1 + eps) * adv
     d = lp_ref - lp_new
-    kl = d.exp() - d - 1                     # k3 估计
+    kl = d.exp() - d - 1  # k3 估计
     loss = -(torch.min(s1, s2) - beta * kl).mean()
     return adv, loss`;
 

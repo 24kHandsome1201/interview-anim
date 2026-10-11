@@ -2,10 +2,10 @@ import { recorder } from '../../js/util.js';
 
 const code = `def dailyTemperatures(T):
     ans = [0] * len(T)
-    st = []                # 存下标，对应温度单调递减
+    st = []                # 存下标，单调递减
     for i, t in enumerate(T):
         while st and T[st[-1]] < t:
-            j = st.pop()   # j 等来了第一个更暖的日子
+            j = st.pop()   # j 等到更暖一天
             ans[j] = i - j
         st.append(i)
     return ans`;

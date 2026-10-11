@@ -9,7 +9,7 @@ class LRUCache:
     def __init__(self, capacity):
         self.cap = capacity
         self.d = {}                    # key -> node
-        # 头尾哨兵：head.next 最近用，tail.prev 最久未用
+        # 头尾哨兵：head 侧新、tail 侧旧
         self.head = Node(-1, -1)
         self.tail = Node(-1, -1)
         self.head.next = self.tail

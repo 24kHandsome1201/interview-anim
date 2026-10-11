@@ -121,7 +121,7 @@
  "lc-15": {
   "title": "三数之和",
   "track": "algo",
-  "code": "def threeSum(nums):\n    nums.sort()\n    ans = []\n    n = len(nums)\n    for i in range(n):\n        if i and nums[i] == nums[i - 1]:\n            continue            # 跳过重复的三元组\n        l, r = i + 1, n - 1\n        while l < r:\n            s = nums[i] + nums[l] + nums[r]\n            if s < 0:\n                l += 1\n            elif s > 0:\n                r -= 1\n            else:\n                ans.append([nums[i], nums[l], nums[r]])\n                l += 1\n                r -= 1\n                while l < r and nums[l] == nums[l - 1]:\n                    l += 1      # 跳过重复的左数\n                while l < r and nums[r] == nums[r + 1]:\n                    r -= 1      # 跳过重复的右数\n    return ans",
+  "code": "def threeSum(nums):\n    nums.sort()\n    ans = []\n    n = len(nums)\n    for i in range(n):\n        if i and nums[i] == nums[i - 1]:\n            continue            # 跳过重复的三元组\n        l, r = i + 1, n - 1\n        while l < r:\n            s = nums[i] + nums[l] + nums[r]\n            if s < 0:\n                l += 1\n            elif s > 0:\n                r -= 1\n            else:\n                ans.append([nums[i],\n                            nums[l], nums[r]])\n                l += 1\n                r -= 1\n                while l < r and nums[l]==nums[l-1]:\n                    l += 1      # 跳过重复的左数\n                while l < r and nums[r]==nums[r+1]:\n                    r -= 1      # 跳过重复的右数\n    return ans",
   "cases": [
    {
     "name": "示例 1",
@@ -181,7 +181,7 @@
  "lc-42": {
   "title": "接雨水",
   "track": "algo",
-  "code": "def trap(height):\n    left, right = 0, len(height) - 1\n    left_max = right_max = 0\n    ans = 0\n    while left < right:\n        if height[left] < height[right]:\n            left_max = max(left_max, height[left])\n            ans += left_max - height[left]\n            left += 1\n        else:\n            right_max = max(right_max, height[right])\n            ans += right_max - height[right]\n            right -= 1\n    return ans",
+  "code": "def trap(height):\n    left, right = 0, len(height) - 1\n    l_max = r_max = 0\n    ans = 0\n    while left < right:\n        if height[left] < height[right]:\n            l_max = max(l_max, height[left])\n            ans += l_max - height[left]\n            left += 1\n        else:\n            r_max = max(r_max, height[right])\n            ans += r_max - height[right]\n            right -= 1\n    return ans",
   "cases": [
    {
     "name": "示例 1",
@@ -247,7 +247,7 @@
  "lc-239": {
   "title": "滑动窗口最大值",
   "track": "algo",
-  "code": "from collections import deque\n\ndef maxSlidingWindow(nums, k):\n    dq = deque()       # 存下标，对应值单调递减\n    ans = []\n    for i, x in enumerate(nums):\n        while dq and nums[dq[-1]] < x:\n            dq.pop()   # 比 x 小又靠左，不可能是最大值\n        dq.append(i)\n        if dq[0] <= i - k:\n            dq.popleft()  # 队头滑出窗口\n        if i >= k - 1:\n            ans.append(nums[dq[0]])\n    return ans",
+  "code": "from collections import deque\n\ndef maxSlidingWindow(nums, k):\n    dq = deque()       # 存下标，对应值单调递减\n    ans = []\n    for i, x in enumerate(nums):\n        while dq and nums[dq[-1]] < x:\n            dq.pop()   # 不可能成为最大值\n        dq.append(i)\n        if dq[0] <= i - k:\n            dq.popleft()  # 队头滑出窗口\n        if i >= k - 1:\n            ans.append(nums[dq[0]])\n    return ans",
   "cases": [
    {
     "name": "示例 1",
@@ -376,7 +376,7 @@
  "lc-146": {
   "title": "LRU 缓存",
   "track": "algo",
-  "code": "class Node:\n    def __init__(self, key, val):\n        self.key, self.val = key, val\n        self.prev = self.next = None\n\nclass LRUCache:\n    def __init__(self, capacity):\n        self.cap = capacity\n        self.d = {}                    # key -> node\n        # 头尾哨兵：head.next 最近用，tail.prev 最久未用\n        self.head = Node(-1, -1)\n        self.tail = Node(-1, -1)\n        self.head.next = self.tail\n        self.tail.prev = self.head\n    def _remove(self, node):\n        node.prev.next = node.next\n        node.next.prev = node.prev\n    def _add_front(self, node):\n        node.prev = self.head\n        node.next = self.head.next\n        node.next.prev = self.head.next = node\n    def get(self, key):\n        if key not in self.d:\n            return -1\n        node = self.d[key]\n        self._remove(node); self._add_front(node)\n        return node.val\n    def put(self, key, value):\n        if key in self.d:\n            self._remove(self.d[key])\n        node = Node(key, value)\n        self.d[key] = node\n        self._add_front(node)\n        if len(self.d) > self.cap:\n            old = self.tail.prev       # 最久未用\n            self._remove(old)\n            del self.d[old.key]",
+  "code": "class Node:\n    def __init__(self, key, val):\n        self.key, self.val = key, val\n        self.prev = self.next = None\n\nclass LRUCache:\n    def __init__(self, capacity):\n        self.cap = capacity\n        self.d = {}                    # key -> node\n        # 头尾哨兵：head 侧新、tail 侧旧\n        self.head = Node(-1, -1)\n        self.tail = Node(-1, -1)\n        self.head.next = self.tail\n        self.tail.prev = self.head\n    def _remove(self, node):\n        node.prev.next = node.next\n        node.next.prev = node.prev\n    def _add_front(self, node):\n        node.prev = self.head\n        node.next = self.head.next\n        node.next.prev = self.head.next = node\n    def get(self, key):\n        if key not in self.d:\n            return -1\n        node = self.d[key]\n        self._remove(node); self._add_front(node)\n        return node.val\n    def put(self, key, value):\n        if key in self.d:\n            self._remove(self.d[key])\n        node = Node(key, value)\n        self.d[key] = node\n        self._add_front(node)\n        if len(self.d) > self.cap:\n            old = self.tail.prev       # 最久未用\n            self._remove(old)\n            del self.d[old.key]",
   "cases": [
    {
     "name": "力扣示例",
@@ -551,7 +551,7 @@
  "lc-236": {
   "title": "二叉树的最近公共祖先",
   "track": "algo",
-  "code": "def lowestCommonAncestor(root, p, q):\n    if root in (None, p, q):\n        return root              # 空 / 命中，直接上报\n    left = lowestCommonAncestor(root.left, p, q)\n    right = lowestCommonAncestor(root.right, p, q)\n    if left and right:\n        return root              # p、q 分居两侧 -> 即 LCA\n    return left or right         # 非空一边继续上报",
+  "code": "def lowestCommonAncestor(root, p, q):\n    if root in (None, p, q):\n        return root              # 空 / 命中\n    left = lowestCommonAncestor(root.left, p, q)\n    right = lowestCommonAncestor(root.right, p, q)\n    if left and right:\n        return root              # 分居两侧 = LCA\n    return left or right         # 非空一边继续上报",
   "cases": [
    {
     "name": "示例 1",
@@ -602,7 +602,7 @@
  "lc-200": {
   "title": "岛屿数量",
   "track": "algo",
-  "code": "def numIslands(grid):\n    count = 0\n    for i in range(len(grid)):\n        for j in range(len(grid[0])):\n            if grid[i][j] == '1':\n                count += 1\n                dfs(grid, i, j)   # 把整座岛染成 '0'\n    return count\n\ndef dfs(g, i, j):\n    if (i < 0 or i >= len(g) or j < 0 or j >= len(g[0])\n            or g[i][j] != '1'):\n        return\n    g[i][j] = '0'                 # 染色 = 标记访问过\n    dfs(g, i + 1, j)\n    dfs(g, i - 1, j)\n    dfs(g, i, j + 1)\n    dfs(g, i, j - 1)",
+  "code": "def numIslands(grid):\n    count = 0\n    for i in range(len(grid)):\n        for j in range(len(grid[0])):\n            if grid[i][j] == '1':\n                count += 1\n                dfs(grid, i, j)   # 把整座岛染成 '0'\n    return count\n\ndef dfs(g, i, j):\n    if (i < 0 or i >= len(g) or j < 0 or\n            j >= len(g[0]) or g[i][j] != '1'):\n        return\n    g[i][j] = '0'                 # 染色标记\n    dfs(g, i + 1, j)\n    dfs(g, i - 1, j)\n    dfs(g, i, j + 1)\n    dfs(g, i, j - 1)",
   "cases": [
    {
     "name": "三座岛",
@@ -721,7 +721,7 @@
  "lc-46": {
   "title": "全排列",
   "track": "algo",
-  "code": "def permute(nums):\n    ans = []\n    def dfs(path, used):\n        if len(path) == len(nums):\n            ans.append(path.copy())   # 到底了，收一个排列\n            return\n        for i in range(len(nums)):\n            if used[i]:\n                continue\n            used[i] = True            # 做选择\n            path.append(nums[i])\n            dfs(path, used)\n            path.pop()                # 撤销选择\n            used[i] = False\n    dfs([], [False] * len(nums))\n    return ans",
+  "code": "def permute(nums):\n    ans = []\n    def dfs(path, used):\n        if len(path) == len(nums):\n            ans.append(path.copy())   # 收一个排列\n            return\n        for i in range(len(nums)):\n            if used[i]:\n                continue\n            used[i] = True            # 做选择\n            path.append(nums[i])\n            dfs(path, used)\n            path.pop()                # 撤销选择\n            used[i] = False\n    dfs([], [False] * len(nums))\n    return ans",
   "cases": [
    {
     "name": "n=3",
@@ -970,7 +970,7 @@
  "lc-739": {
   "title": "每日温度",
   "track": "algo",
-  "code": "def dailyTemperatures(T):\n    ans = [0] * len(T)\n    st = []                # 存下标，对应温度单调递减\n    for i, t in enumerate(T):\n        while st and T[st[-1]] < t:\n            j = st.pop()   # j 等来了第一个更暖的日子\n            ans[j] = i - j\n        st.append(i)\n    return ans",
+  "code": "def dailyTemperatures(T):\n    ans = [0] * len(T)\n    st = []                # 存下标，单调递减\n    for i, t in enumerate(T):\n        while st and T[st[-1]] < t:\n            j = st.pop()   # j 等到更暖一天\n            ans[j] = i - j\n        st.append(i)\n    return ans",
   "cases": [
    {
     "name": "示例 1",
@@ -1023,7 +1023,7 @@
  "lc-912": {
   "title": "排序数组（快速排序）",
   "track": "algo",
-  "code": "def sortArray(nums):\n    def qs(lo, hi):\n        if lo >= hi:\n            return\n        pivot = nums[hi]          # Lomuto：固定取最后一个\n        i = lo                    # ≤pivot 区的右边界\n        for j in range(lo, hi):\n            if nums[j] < pivot:\n                nums[i], nums[j] = nums[j], nums[i]\n                i += 1\n        nums[i], nums[hi] = nums[hi], nums[i]  # pivot 归位\n        qs(lo, i - 1)\n        qs(i + 1, hi)\n    qs(0, len(nums) - 1)\n    return nums",
+  "code": "def sortArray(nums):\n    def qs(lo, hi):\n        if lo >= hi:\n            return\n        pivot = nums[hi]          # Lomuto 取尾\n        i = lo                    # ≤pivot 边界\n        for j in range(lo, hi):\n            if nums[j] < pivot:\n                nums[i], nums[j] = nums[j], nums[i]\n                i += 1\n        nums[i], nums[hi] = nums[hi], nums[i]\n        qs(lo, i - 1)\n        qs(i + 1, hi)\n    qs(0, len(nums) - 1)\n    return nums",
   "cases": [
    {
     "name": "示例",
@@ -1108,7 +1108,7 @@
  "lc-72": {
   "title": "编辑距离",
   "track": "algo",
-  "code": "def minDistance(w1, w2):\n    m, n = len(w1), len(w2)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(m + 1):\n        dp[i][0] = i            # w1 前 i 个全删\n    for j in range(n + 1):\n        dp[0][j] = j            # 全插成 w2 前 j 个\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if w1[i - 1] == w2[j - 1]:\n                dp[i][j] = dp[i - 1][j - 1]  # 相同白嫖\n            else:\n                dp[i][j] = 1 + min(\n                    dp[i - 1][j],      # 删\n                    dp[i][j - 1],      # 插\n                    dp[i - 1][j - 1])  # 换\n    return dp[m][n]",
+  "code": "def minDistance(w1, w2):\n    m, n = len(w1), len(w2)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(m + 1):\n        dp[i][0] = i            # w1 前 i 个全删\n    for j in range(n + 1):\n        dp[0][j] = j            # 全插成 w2 前 j 个\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if w1[i - 1] == w2[j - 1]:\n                dp[i][j] = dp[i - 1][j - 1]\n            else:\n                dp[i][j] = 1 + min(\n                    dp[i - 1][j],      # 删\n                    dp[i][j - 1],      # 插\n                    dp[i - 1][j - 1])  # 换\n    return dp[m][n]",
   "cases": [
    {
     "name": "horse → ros",
@@ -1174,7 +1174,7 @@
  "llm-7": {
   "title": "LayerNorm",
   "track": "llm",
-  "code": "import torch\n\ndef layer_norm(x, gamma, beta, eps=1e-5):\n    mean = x.mean(dim=-1, keepdim=True)\n    var = x.var(dim=-1, unbiased=False, keepdim=True)\n    x_hat = (x - mean) / torch.sqrt(var + eps)\n    return gamma * x_hat + beta",
+  "code": "import torch\n\ndef layer_norm(x, gamma, beta, eps=1e-5):\n    mean = x.mean(dim=-1, keepdim=True)\n    var = x.var(-1, unbiased=False, keepdim=True)\n    x_hat = (x - mean) / torch.sqrt(var + eps)\n    return gamma * x_hat + beta",
   "cases": [
    {
     "name": "T=3, d=4",
@@ -1458,7 +1458,7 @@
  "llm-11": {
   "title": "Scaled Dot-Product Attention",
   "track": "llm",
-  "code": "import math\nimport torch\n\ndef attention(Q, K, V, mask=None):\n    d_k = Q.size(-1)\n    scores = Q @ K.transpose(-2, -1) / math.sqrt(d_k)\n    if mask is not None:\n        scores = scores.masked_fill(mask == 0,\n                                      float('-inf'))\n    weights = torch.softmax(scores, dim=-1)\n    return weights @ V",
+  "code": "import math\nimport torch\n\ndef attention(Q, K, V, mask=None):\n    d_k = Q.size(-1)\n    scores = Q @ K.transpose(-2, -1) / d_k ** 0.5\n    if mask is not None:\n        scores = scores.masked_fill(mask == 0,\n                                      float('-inf'))\n    weights = torch.softmax(scores, dim=-1)\n    return weights @ V",
   "cases": [
    {
     "name": "T=3, d=4",
@@ -1698,7 +1698,7 @@
  "llm-12": {
   "title": "Causal Mask",
   "track": "llm",
-  "code": "import torch\n\ndef causal_attention(scores):\n    T = scores.size(-1)\n    mask = torch.tril(torch.ones(T, T))       # 下三角 = 1\n    scores = scores.masked_fill(mask == 0,\n                                float('-inf'))\n    return torch.softmax(scores, dim=-1)",
+  "code": "import torch\n\ndef causal_attention(scores):\n    T = scores.size(-1)\n    mask = torch.tril(torch.ones(T, T))  # 下三角\n    scores = scores.masked_fill(mask == 0,\n                                float('-inf'))\n    return torch.softmax(scores, dim=-1)",
   "cases": [
    {
     "name": "T=4",
@@ -1849,7 +1849,7 @@
  "llm-15": {
   "title": "Multi-Head Attention",
   "track": "llm",
-  "code": "import torch\nimport math\n\ndef mha(x, W_q, W_k, W_v, W_o, h):\n    B, T, D = x.shape\n    dk = D // h\n    Q = x @ W_q                     # [B,T,D]，K、V 同理\n    Q = Q.view(B, T, h, dk).transpose(1, 2)   # 头维前置\n    K = (x @ W_k).view(B, T, h, dk).transpose(1, 2)\n    V = (x @ W_v).view(B, T, h, dk).transpose(1, 2)\n    scores = Q @ K.transpose(-2, -1) / math.sqrt(dk)\n    attn = torch.softmax(scores, dim=-1)\n    out = attn @ V                  # [B,h,T,dk]\n    out = out.transpose(1, 2).reshape(B, T, D)  # 合并头\n    return out @ W_o",
+  "code": "import torch\nimport math\n\ndef mha(x, W_q, W_k, W_v, W_o, h):\n    B, T, D = x.shape\n    dk = D // h\n    Q = x @ W_q                     # 投影\n    Q = Q.view(B, T, h, dk).transpose(1, 2)   # 拆头\n    K = (x @ W_k).view(B, T, h, dk).transpose(1, 2)\n    V = (x @ W_v).view(B, T, h, dk).transpose(1, 2)\n    scores = Q @ K.transpose(-2, -1) / math.sqrt(dk)\n    attn = torch.softmax(scores, dim=-1)\n    out = attn @ V                  # [B,h,T,dk]\n    out = out.transpose(1, 2).reshape(B, T, D)\n    return out @ W_o",
   "cases": [
    {
     "name": "T=3, D=4, h=2",
@@ -2184,7 +2184,7 @@
  "llm-18": {
   "title": "GQA 分组查询注意力",
   "track": "llm",
-  "code": "import torch\nimport math\n\ndef gqa(Q, K, V, h_q, h_kv):\n    # Q: [h_q, T, dk]，K/V: [h_kv, T, dk]\n    rep = h_q // h_kv\n    K = K.repeat_interleave(rep, dim=0)   # rep 个 Q 头共享\n    V = V.repeat_interleave(rep, dim=0)\n    scores = Q @ K.transpose(-2, -1) / Q.size(-1) ** 0.5\n    attn = torch.softmax(scores, dim=-1)\n    return attn @ V",
+  "code": "import torch\n\ndef gqa(Q, K, V, h_q, h_kv):\n    # Q: [h_q, T, dk]，K/V: [h_kv, T, dk]\n    rep = h_q // h_kv\n    K = K.repeat_interleave(rep, dim=0)   # 共享\n    V = V.repeat_interleave(rep, dim=0)\n    s = Q @ K.transpose(-2, -1) / Q.size(-1) ** 0.5\n    attn = torch.softmax(s, dim=-1)\n    return attn @ V",
   "cases": [
    {
     "name": "4 Q 头共享 2 KV 头",
@@ -2527,7 +2527,7 @@
  "llm-20": {
   "title": "KV Cache 增量解码",
   "track": "llm",
-  "code": "import torch\nimport math\n\n@torch.no_grad()\ndef generate(K_cache, V_cache, q_t, k_t, v_t):\n    # 每步只算新 token 的 k, v 并追加到缓存\n    K_cache = torch.cat([K_cache, k_t], dim=0)\n    V_cache = torch.cat([V_cache, v_t], dim=0)\n    scores = q_t @ K_cache.T / math.sqrt(q_t.size(-1))\n    attn = torch.softmax(scores, dim=-1)\n    return attn @ V_cache, K_cache, V_cache",
+  "code": "import torch\n\n@torch.no_grad()\ndef generate(K_cache, V_cache, q_t, k_t, v_t):\n    # 每步只算新 token 的 k, v 并追加到缓存\n    K_cache = torch.cat([K_cache, k_t], dim=0)\n    V_cache = torch.cat([V_cache, v_t], dim=0)\n    scores = q_t @ K_cache.T / q_t.size(-1) ** 0.5\n    attn = torch.softmax(scores, dim=-1)\n    return attn @ V_cache, K_cache, V_cache",
   "cases": [
    {
     "name": "预填充 2 + 解码 3",
@@ -2814,7 +2814,7 @@
  "llm-23": {
   "title": "FlashAttention 分块计算",
   "track": "llm",
-  "code": "import torch\nimport math\n\ndef flash_row(q, K, V, B):\n    m, l = float('-inf'), 0.0      # 运行 max / 归一和\n    acc = torch.zeros(q.size(-1))\n    for s in range(0, K.size(0), B):\n        Kb, Vb = K[s:s + B], V[s:s + B]      # 载一块\n        sj = q @ Kb.T / math.sqrt(q.size(-1))\n        m_new = max(m, sj.max())\n        alpha = math.exp(m - m_new)          # 旧量缩放\n        beta = torch.exp(sj - m_new)         # 新块权重\n        l = l * alpha + beta.sum()\n        acc = acc * alpha + beta @ Vb\n        m = m_new\n    return acc / l",
+  "code": "import torch\nimport math\n\ndef flash_row(q, K, V, B):\n    m, l = float('-inf'), 0.0      # 在线 max/和\n    acc = torch.zeros(q.size(-1))\n    for s in range(0, K.size(0), B):\n        Kb, Vb = K[s:s + B], V[s:s + B]      # 取块\n        sj = q @ Kb.T / math.sqrt(q.size(-1))\n        m_new = max(m, sj.max())\n        alpha = math.exp(m - m_new)\n        beta = torch.exp(sj - m_new)\n        l = l * alpha + beta.sum()\n        acc = acc * alpha + beta @ Vb\n        m = m_new\n    return acc / l",
   "cases": [
    {
     "name": "K 分 3 块",
@@ -2983,7 +2983,7 @@
  "llm-27": {
   "title": "正弦位置编码",
   "track": "llm",
-  "code": "import torch\nimport math\n\ndef sinusoidal_pe(T, d, base=10000):\n    P = torch.zeros(T, d)\n    pos = torch.arange(T).unsqueeze(1)        # [T,1]\n    i = torch.arange(0, d, 2)                 # [d/2]\n    omega = base ** (-i / d)                  # 频率随维衰减\n    P[:, 0::2] = torch.sin(pos * omega)       # 偶数维 sin\n    P[:, 1::2] = torch.cos(pos * omega)       # 奇数维 cos\n    return P",
+  "code": "import torch\nimport math\n\ndef sinusoidal_pe(T, d, base=10000):\n    P = torch.zeros(T, d)\n    pos = torch.arange(T).unsqueeze(1)  # [T,1]\n    i = torch.arange(0, d, 2)           # [d/2]\n    omega = base ** (-i / d)            # 随维衰减\n    P[:, 0::2] = torch.sin(pos * omega)  # sin\n    P[:, 1::2] = torch.cos(pos * omega)  # cos\n    return P",
   "cases": [
    {
     "name": "T=6, d=6",
@@ -3269,7 +3269,7 @@
  "llm-35": {
   "title": "MoE Top-k 路由",
   "track": "llm",
-  "code": "import torch\n\ndef moe_forward(x, W_gate, experts, k):\n    logits = x @ W_gate                    # [T, E]\n    probs = torch.softmax(logits, dim=-1)\n    topv, topi = probs.topk(k, dim=-1)     # 选 k 个专家\n    w = topv / topv.sum(dim=-1, keepdim=True)   # 重新归一化\n    out = torch.zeros_like(x)\n    for t in range(x.size(0)):\n        for j in range(k):\n            e = topi[t, j]\n            out[t] += w[t, j] * experts[e](x[t])\n    return out",
+  "code": "import torch\n\ndef moe_forward(x, W_gate, experts, k):\n    logits = x @ W_gate                    # [T, E]\n    probs = torch.softmax(logits, dim=-1)\n    topv, topi = probs.topk(k, dim=-1)     # 选 k\n    w = topv / topv.sum(dim=-1, keepdim=True)\n    out = torch.zeros_like(x)\n    for t in range(x.size(0)):\n        for j in range(k):\n            e = topi[t, j]\n            out[t] += w[t, j] * experts[e](x[t])\n    return out",
   "cases": [
    {
     "name": "T=3, E=4, k=2",
@@ -3560,7 +3560,7 @@
  "llm-45": {
   "title": "BPE 训练",
   "track": "llm",
-  "code": "def bpe_train(corpus, num_merges):\n    # corpus: {word: count}，先拆成单字符\n    words = {tuple(w): c for w, c in corpus.items()}\n    merges = []\n    for _ in range(num_merges):\n        pairs = count_pairs(words)      # 统计相邻对频次\n        best = min(pairs, key=lambda p: (-pairs[p], p))\n        words = merge(words, best)      # 相邻该对都合并\n        merges.append(best)\n    return merges",
+  "code": "def bpe_train(corpus, num_merges):\n    # corpus: {word: count}，先拆成单字符\n    words = {tuple(w): c for w, c in corpus.items()}\n    merges = []\n    for _ in range(num_merges):\n        pairs = count_pairs(words)      # 统计相邻对\n        key = lambda p: (-pairs[p], p)\n        best = min(pairs, key=key)\n        words = merge(words, best)      # 该对都合并\n        merges.append(best)\n    return merges",
   "cases": [
    {
     "name": "经典例子",
@@ -3648,7 +3648,7 @@
  "llm-53": {
   "title": "Top-p 采样",
   "track": "llm",
-  "code": "import torch\n\ndef top_p_sample(logits, p, u):\n    probs = torch.softmax(logits, dim=-1)\n    sorted_p, idx = probs.sort(descending=True)\n    cum = sorted_p.cumsum(-1)\n    keep = cum - sorted_p <= p        # 保留 ≤p 的核\n    sorted_p = sorted_p * keep\n    sorted_p = sorted_p / sorted_p.sum()   # 重新归一化\n    cum = sorted_p.cumsum(-1)\n    j = (cum < u).sum()               # u 落在哪个 token\n    return idx[j]",
+  "code": "import torch\n\ndef top_p_sample(logits, p, u):\n    probs = torch.softmax(logits, dim=-1)\n    sorted_p, idx = probs.sort(descending=True)\n    cum = sorted_p.cumsum(-1)\n    keep = cum - sorted_p <= p        # 保留 ≤p 的核\n    sorted_p = sorted_p * keep\n    sorted_p = sorted_p / sorted_p.sum()   # 归一化\n    cum = sorted_p.cumsum(-1)\n    j = (cum < u).sum()               # u 定位\n    return idx[j]",
   "cases": [
    {
     "name": "p = 0.9",
@@ -3687,7 +3687,7 @@
  "llm-56": {
   "title": "Beam Search",
   "track": "llm",
-  "code": "import math\nimport torch\n\ndef beam_search(logp_fn, beam_size, max_len):\n    beams = [([], 0.0)]              # (前缀, 累积logp)\n    for _ in range(max_len):\n        cand = []\n        for seq, s in beams:\n            for tok, lp in enumerate(logp_fn(seq)):\n                cand.append((seq + [tok], s + lp))\n        cand.sort(key=lambda x: x[1], reverse=True)\n        beams = cand[:beam_size]     # 只留 top-k 个前缀\n    return max(beams, key=lambda x: x[1])[0]",
+  "code": "import math\nimport torch\n\ndef beam_search(logp_fn, beam_size, max_len):\n    beams = [([], 0.0)]              # (seq,Σlogp)\n    for _ in range(max_len):\n        cand = []\n        for seq, s in beams:\n            for tok, lp in enumerate(logp_fn(seq)):\n                cand.append((seq + [tok], s + lp))\n        cand.sort(key=lambda x: x[1], reverse=True)\n        beams = cand[:beam_size]     # 留 top-k\n    return max(beams, key=lambda x: x[1])[0]",
   "cases": [
    {
     "name": "beam=2, 3 步",
@@ -4168,7 +4168,7 @@
  "llm-74": {
   "title": "LoRA Linear",
   "track": "llm",
-  "code": "import torch\nimport torch.nn as nn\n\nclass LoRALinear(nn.Module):\n    def __init__(self, W, r, alpha):\n        super().__init__()\n        self.W = W                   # 冻结权重\n        self.A = nn.Parameter(torch.randn(r, W.size(1)))\n        self.B = nn.Parameter(torch.zeros(W.size(0), r))\n        self.s = alpha / r\n    def forward(self, x):\n        return (x @ self.W.T\n                + self.s * x @ self.A.T @ self.B.T)\n    def merge(self):\n        return self.W + self.s * self.B @ self.A   # 零延迟",
+  "code": "import torch\nimport torch.nn as nn\n\nclass LoRALinear(nn.Module):\n    def __init__(self, W, r, alpha):\n        super().__init__()\n        self.W = W                   # 冻结权重\n        self.A = nn.Parameter(\n            torch.randn(r, W.size(1)))\n        self.B = nn.Parameter(\n            torch.zeros(W.size(0), r))\n        self.s = alpha / r\n    def forward(self, x):\n        return (x @ self.W.T\n                + self.s * x @ self.A.T @ self.B.T)\n    def merge(self):\n        return self.W + self.s * self.B @ self.A",
   "cases": [
    {
     "name": "d=4, r=2",
@@ -4385,7 +4385,7 @@
  "llm-82": {
   "title": "DPO Loss",
   "track": "llm",
-  "code": "import torch\nimport torch.nn.functional as F\n\ndef dpo_loss(lp_pol_c, lp_pol_r,\n             lp_ref_c, lp_ref_r, beta):\n    # 每条：policy 相对 ref 对 chosen / rejected 的偏好差\n    logit = beta * ((lp_pol_c - lp_ref_c)\n                    - (lp_pol_r - lp_ref_r))\n    return -F.logsigmoid(logit).mean()",
+  "code": "import torch\nimport torch.nn.functional as F\n\ndef dpo_loss(lp_pol_c, lp_pol_r,\n             lp_ref_c, lp_ref_r, beta):\n    # 每条：policy 相对 ref 的偏好差\n    logit = beta * ((lp_pol_c - lp_ref_c)\n                    - (lp_pol_r - lp_ref_r))\n    return -F.logsigmoid(logit).mean()",
   "cases": [
    {
     "name": "3 对样本, β=0.1",
@@ -4444,7 +4444,7 @@
  "llm-85": {
   "title": "PPO Clip 目标",
   "track": "llm",
-  "code": "import torch\n\ndef ppo_clip_loss(lp_new, lp_old, adv, eps=0.2):\n    ratio = torch.exp(lp_new - lp_old)      # 新旧概率比\n    s1 = ratio * adv\n    s2 = torch.clamp(ratio, 1 - eps, 1 + eps) * adv\n    loss = -torch.min(s1, s2).mean()\n    return loss",
+  "code": "import torch\n\ndef ppo_clip_loss(lp_new, lp_old, adv, eps=0.2):\n    ratio = torch.exp(lp_new - lp_old)\n    s1 = ratio * adv\n    s2 = torch.clamp(ratio, 1 - eps, 1 + eps) * adv\n    loss = -torch.min(s1, s2).mean()\n    return loss",
   "cases": [
    {
     "name": "混合情形",
@@ -4500,7 +4500,7 @@
  "llm-89": {
   "title": "GRPO 组内优势",
   "track": "llm",
-  "code": "import torch\n\ndef grpo(rewards, lp_new, lp_old,\n         lp_ref, eps=0.2, beta=0.04):\n    mean = rewards.mean()\n    std = rewards.std(unbiased=False)\n    adv = (rewards - mean) / (std + 1e-8)    # 组内相对优势\n    ratio = torch.exp(lp_new - lp_old)\n    s1 = ratio * adv\n    s2 = torch.clamp(ratio, 1 - eps, 1 + eps) * adv\n    d = lp_ref - lp_new\n    kl = d.exp() - d - 1                     # k3 估计\n    loss = -(torch.min(s1, s2) - beta * kl).mean()\n    return adv, loss",
+  "code": "import torch\n\ndef grpo(rewards, lp_new, lp_old,\n         lp_ref, eps=0.2, beta=0.04):\n    mean = rewards.mean()\n    std = rewards.std(unbiased=False)\n    adv = (rewards - mean) / (std + 1e-8)  # 优势\n    ratio = torch.exp(lp_new - lp_old)\n    s1 = ratio * adv\n    s2 = torch.clamp(ratio, 1 - eps, 1 + eps) * adv\n    d = lp_ref - lp_new\n    kl = d.exp() - d - 1  # k3 估计\n    loss = -(torch.min(s1, s2) - beta * kl).mean()\n    return adv, loss",
   "cases": [
    {
     "name": "G=4",

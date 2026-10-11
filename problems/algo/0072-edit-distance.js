@@ -10,7 +10,7 @@ const code = `def minDistance(w1, w2):
     for i in range(1, m + 1):
         for j in range(1, n + 1):
             if w1[i - 1] == w2[j - 1]:
-                dp[i][j] = dp[i - 1][j - 1]  # 相同白嫖
+                dp[i][j] = dp[i - 1][j - 1]
             else:
                 dp[i][j] = 1 + min(
                     dp[i - 1][j],      # 删

@@ -8,9 +8,9 @@ def top_p_sample(logits, p, u):
     cum = sorted_p.cumsum(-1)
     keep = cum - sorted_p <= p        # 保留 ≤p 的核
     sorted_p = sorted_p * keep
-    sorted_p = sorted_p / sorted_p.sum()   # 重新归一化
+    sorted_p = sorted_p / sorted_p.sum()   # 归一化
     cum = sorted_p.cumsum(-1)
-    j = (cum < u).sum()               # u 落在哪个 token
+    j = (cum < u).sum()               # u 定位
     return idx[j]`;
 
 const TOK = ['的', '是', '在', '我', '了', '和', '有', '不'];

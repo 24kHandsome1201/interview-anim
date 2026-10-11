@@ -4,13 +4,13 @@ const code = `def sortArray(nums):
     def qs(lo, hi):
         if lo >= hi:
             return
-        pivot = nums[hi]          # Lomuto：固定取最后一个
-        i = lo                    # ≤pivot 区的右边界
+        pivot = nums[hi]          # Lomuto 取尾
+        i = lo                    # ≤pivot 边界
         for j in range(lo, hi):
             if nums[j] < pivot:
                 nums[i], nums[j] = nums[j], nums[i]
                 i += 1
-        nums[i], nums[hi] = nums[hi], nums[i]  # pivot 归位
+        nums[i], nums[hi] = nums[hi], nums[i]
         qs(lo, i - 1)
         qs(i + 1, hi)
     qs(0, len(nums) - 1)

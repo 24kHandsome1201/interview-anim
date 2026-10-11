@@ -3,7 +3,7 @@ import { recorder, round } from '../../js/util.js';
 const code = `import torch
 
 def ppo_clip_loss(lp_new, lp_old, adv, eps=0.2):
-    ratio = torch.exp(lp_new - lp_old)      # 新旧概率比
+    ratio = torch.exp(lp_new - lp_old)
     s1 = ratio * adv
     s2 = torch.clamp(ratio, 1 - eps, 1 + eps) * adv
     loss = -torch.min(s1, s2).mean()

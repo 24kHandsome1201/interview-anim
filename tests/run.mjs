@@ -21,7 +21,7 @@ for (const p of problems) {
   (p.code || '').split('\n').forEach((line, i) => {
     let w = 0;
     for (const ch of line) w += ch.codePointAt(0) > 0x2e7f ? 2 : 1;
-    if (w > 60) errs.push(`code line ${i + 1} too wide (${w} > 60): ${line.trim().slice(0, 30)}…`);
+    if (w > 52) errs.push(`code line ${i + 1} too wide (${w} > 52): ${line.trim().slice(0, 30)}…`);
   });
   for (const pre of p.presets || []) {
     let out;

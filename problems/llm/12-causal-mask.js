@@ -4,7 +4,7 @@ const code = `import torch
 
 def causal_attention(scores):
     T = scores.size(-1)
-    mask = torch.tril(torch.ones(T, T))       # 下三角 = 1
+    mask = torch.tril(torch.ones(T, T))  # 下三角
     scores = scores.masked_fill(mask == 0,
                                 float('-inf'))
     return torch.softmax(scores, dim=-1)`;

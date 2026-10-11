@@ -4,14 +4,14 @@ const code = `import torch
 import math
 
 def flash_row(q, K, V, B):
-    m, l = float('-inf'), 0.0      # 运行 max / 归一和
+    m, l = float('-inf'), 0.0      # 在线 max/和
     acc = torch.zeros(q.size(-1))
     for s in range(0, K.size(0), B):
-        Kb, Vb = K[s:s + B], V[s:s + B]      # 载一块
+        Kb, Vb = K[s:s + B], V[s:s + B]      # 取块
         sj = q @ Kb.T / math.sqrt(q.size(-1))
         m_new = max(m, sj.max())
-        alpha = math.exp(m - m_new)          # 旧量缩放
-        beta = torch.exp(sj - m_new)         # 新块权重
+        alpha = math.exp(m - m_new)
+        beta = torch.exp(sj - m_new)
         l = l * alpha + beta.sum()
         acc = acc * alpha + beta @ Vb
         m = m_new

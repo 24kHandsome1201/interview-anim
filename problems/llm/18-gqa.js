@@ -1,15 +1,14 @@
 import { recorder, randMatrix, round, roundM, matmul, softmax, transpose } from '../../js/util.js';
 
 const code = `import torch
-import math
 
 def gqa(Q, K, V, h_q, h_kv):
     # Q: [h_q, T, dk]，K/V: [h_kv, T, dk]
     rep = h_q // h_kv
-    K = K.repeat_interleave(rep, dim=0)   # rep 个 Q 头共享
+    K = K.repeat_interleave(rep, dim=0)   # 共享
     V = V.repeat_interleave(rep, dim=0)
-    scores = Q @ K.transpose(-2, -1) / Q.size(-1) ** 0.5
-    attn = torch.softmax(scores, dim=-1)
+    s = Q @ K.transpose(-2, -1) / Q.size(-1) ** 0.5
+    attn = torch.softmax(s, dim=-1)
     return attn @ V`;
 
 const GC = ['cur', 'cmp', 'hl', 'ok'];
@@ -54,11 +53,11 @@ export default {
     const shapes = [h_q, h_kv];
     const memMHA = h_q * 2, memGQA = h_kv * 2;
     const kvMapLayer = (hlQ = -1, hlKV = -1) => ({ type: 'map', id: 'gm', label: `Q 头 → KV 头映射（每 ${rep} 个 Q 头共享 1 个 KV 头）`, headers: ['Q 头', 'KV 头'], entries: Array.from({ length: h_q }, (_, i) => [`q${i}`, `kv${group(i)}`]), colors: Object.fromEntries(Array.from({ length: h_q }, (_, i) => [`q${i}`, i === hlQ ? GC[group(i) % 4] : GC[group(i) % 4]])) });
-    rec.step(4, `Q 有 <code>h_q = ${h_q}</code> 个头，但 K、V 只有 <code>h_kv = ${h_kv}</code> 个——每个 KV 头服务 <code>${rep}</code> 个 Q 头。`,
+    rec.step(3, `Q 有 <code>h_q = ${h_q}</code> 个头，但 K、V 只有 <code>h_kv = ${h_kv}</code> 个——每个 KV 头服务 <code>${rep}</code> 个 Q 头。`,
       [{ type: 'tensor', id: 'sq', name: 'Q', shape: [1, h_q, T, dk], names: ['B', 'h_q', 'T', 'dk'] },
        { type: 'tensor', id: 'sk', name: 'K / V', shape: [1, h_kv, T, dk], names: ['B', 'h_kv', 'T', 'dk'] },
        { type: 'vars', id: 'v', items: { 'KV cache 倍数': `MHA 存 ${memMHA} 份 → GQA 只存 ${memGQA} 份`, 节省: `${Math.round((1 - h_kv / h_q) * 100)}%` } }]);
-    rec.step([5, 6], `<code>repeat_interleave(${rep})</code>：逻辑上把每个 KV 头复制 ${rep} 份，让 Q、K、V 头数对齐（实际实现直接让 Q 头共享，不真的复制内存）。`, [kvMapLayer()]);
+    rec.step([7, 8], `<code>repeat_interleave(${rep})</code>：逻辑上把每个 KV 头复制 ${rep} 份，让 Q、K、V 头数对齐（实际实现直接让 Q 头共享，不真的复制内存）。`, [kvMapLayer()]);
     const W = Array.from({ length: h_q }, () => Array.from({ length: T }, () => Array(T).fill('')));
     for (let qi = 0; qi < h_q; qi++) {
       const kv = group(qi);
@@ -66,7 +65,7 @@ export default {
         const s = matmul(Q[qi], transpose(K[kv]))[i][j] / scale;
         W[qi][i][j] = round(s);
       }
-      rec.step(8, `<code>q${qi}</code> 使用 <code>kv${kv}</code>（第 ${Math.floor(qi / rep) === kv ? Math.floor(qi % rep) + 1 : ''} 个共享它的 Q 头）算注意力：Q[${qi}] · K[${kv}]ᵀ / √${dk}。`,
+      rec.step(9, `<code>q${qi}</code> 使用 <code>kv${kv}</code>（第 ${Math.floor(qi / rep) === kv ? Math.floor(qi % rep) + 1 : ''} 个共享它的 Q 头）算注意力：Q[${qi}] · K[${kv}]ᵀ / √${dk}。`,
         [kvMapLayer(qi, kv),
          { type: 'matrix', id: `w`, label: `head q${qi} 的 scores（颜色同左侧 kv${kv} 组）`, values: W[qi], rowLabels: rl, colLabels: rl, heat: 'diverge', colors: Object.fromEntries(rl.map((_, j) => [`${0},${j}`, GC[kv % 4]])) }]);
     }

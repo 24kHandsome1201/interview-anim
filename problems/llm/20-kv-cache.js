@@ -1,14 +1,13 @@
 import { recorder, randMatrix, round, roundM, softmax } from '../../js/util.js';
 
 const code = `import torch
-import math
 
 @torch.no_grad()
 def generate(K_cache, V_cache, q_t, k_t, v_t):
     # 每步只算新 token 的 k, v 并追加到缓存
     K_cache = torch.cat([K_cache, k_t], dim=0)
     V_cache = torch.cat([V_cache, v_t], dim=0)
-    scores = q_t @ K_cache.T / math.sqrt(q_t.size(-1))
+    scores = q_t @ K_cache.T / q_t.size(-1) ** 0.5
     attn = torch.softmax(scores, dim=-1)
     return attn @ V_cache, K_cache, V_cache`;
 
@@ -46,21 +45,21 @@ export default {
     const outs = [];
     const kMat = (label, colors) => ({ type: 'matrix', id: 'k', label, values: roundM(Kgrow), rowLabels: rl.slice(0, Kgrow.length), colLabels: dl, heat: 'diverge', colors });
     const vMat = (label, colors) => ({ type: 'matrix', id: 'vm', label, values: roundM(Vgrow), rowLabels: rl.slice(0, Vgrow.length), colLabels: dl, heat: 'diverge', colors });
-    rec.step(6, `预填充：前 ${T0} 个 token 的 K、V 已算好放进缓存（这是 prompt 阶段一次性算的）。之后每生成一个 token 只往缓存追加一行。`,
+    rec.step(5, `预填充：前 ${T0} 个 token 的 K、V 已算好放进缓存（这是 prompt 阶段一次性算的）。之后每生成一个 token 只往缓存追加一行。`,
       [kMat('K_cache'), vMat('V_cache'), { type: 'tensor', id: 'sh', name: 'K_cache', shape: [Kgrow.length, d], names: ['已缓存 token 数', 'd'] }]);
     for (let t = 0; t < steps; t++) {
       const cur = T0 + t;
       const q = randMatrix(1, d, seed + 100 + cur * 7)[0];
       const k = randMatrix(1, d, seed + 200 + cur * 7)[0];
       const v = randMatrix(1, d, seed + 300 + cur * 7)[0];
-      rec.step([7, 8], `第 ${t + 1} 步：新 token「${TOKENS[cur]}」只算它自己的 <code>k_t、v_t</code>（1×${d}），<code>cat</code> 追加到缓存末尾——之前的 ${Kgrow.length} 行不重算。`,
+      rec.step([6, 7], `第 ${t + 1} 步：新 token「${TOKENS[cur]}」只算它自己的 <code>k_t、v_t</code>（1×${d}），<code>cat</code> 追加到缓存末尾——之前的 ${Kgrow.length} 行不重算。`,
         [{ type: 'matrix', id: 'nk', label: `新的 k_t（只有 1 行）`, values: [k.map((x) => round(x))], colLabels: dl, heat: 'diverge' }, kMat('K_cache'), vMat('V_cache')]);
       Kgrow.push(k); Vgrow.push(v);
-      rec.step(8, `缓存追加后：K_cache 形状 [${Kgrow.length}, ${d}]（+1 行）。`,
+      rec.step(7, `缓存追加后：K_cache 形状 [${Kgrow.length}, ${d}]（+1 行）。`,
         [kMat('K_cache（底部为刚追加的行）', { [`${Kgrow.length - 1},0`]: 'ok', ...Object.fromEntries(dl.map((_, j) => [`${Kgrow.length - 1},${j}`, 'ok'])) }), vMat('V_cache', Object.fromEntries(dl.map((_, j) => [`${Vgrow.length - 1},${j}`, 'ok'])))]);
       const scores = Kgrow.map((kr) => q.reduce((a, x, j) => a + x * kr[j], 0) / Math.sqrt(d));
       const w = softmax(scores);
-      rec.step([9, 10], `<code>q_t</code>（新 token 的查询）对<b>整个缓存</b>做注意力：scores = q·Kᵀ/√d = [${scores.map((x) => round(x)).join(', ')}] → 权重 [${w.map((x) => round(x)).join(', ')}]。`,
+      rec.step([8, 9], `<code>q_t</code>（新 token 的查询）对<b>整个缓存</b>做注意力：scores = q·Kᵀ/√d = [${scores.map((x) => round(x)).join(', ')}] → 权重 [${w.map((x) => round(x)).join(', ')}]。`,
         [{ type: 'row', id: 'att', items: [
           { label: `q_t「${TOKENS[cur]}」`, values: [q.map((x) => round(x))], colLabels: dl, heat: 'diverge' },
           { op: '·' },
@@ -69,10 +68,10 @@ export default {
           { label: 'attn 权重', values: [w.map((x) => round(x))], colLabels: rl.slice(0, Kgrow.length), heat: true }] }]);
       const o = dl.map((_, j) => w.reduce((a, x, i) => a + x * Vgrow[i][j], 0));
       outs.push(o);
-      rec.step(11, `输出 = Σ 权重 · V_cache 行 = [${o.map((x) => round(x)).join(', ')}]。本步只算了 1 个新 k/v 和 ${Kgrow.length} 次点积；不用 cache 则要重算全部 ${Kgrow.length} 个 token 的 K、V 投影。`,
+      rec.step(10, `输出 = Σ 权重 · V_cache 行 = [${o.map((x) => round(x)).join(', ')}]。本步只算了 1 个新 k/v 和 ${Kgrow.length} 次点积；不用 cache 则要重算全部 ${Kgrow.length} 个 token 的 K、V 投影。`,
         [vMat('V_cache'), { type: 'array', id: 'o', label: `输出 o_t「${TOKENS[cur]}」`, values: o.map((x) => round(x)), indexLabels: dl }]);
     }
-    rec.step(11, `解码完成。共生成 ${steps} 个 token，缓存从 ${T0} 行长到 ${total} 行。省下的就是每步对所有历史 token 的 K/V 重投影——这是所有 LLM 推理引擎的基础优化。`,
+    rec.step(10, `解码完成。共生成 ${steps} 个 token，缓存从 ${T0} 行长到 ${total} 行。省下的就是每步对所有历史 token 的 K/V 重投影——这是所有 LLM 推理引擎的基础优化。`,
       [kMat('最终 K_cache'), vMat('最终 V_cache')]);
     return { steps: rec.steps, result: roundM(outs, 4) };
   },

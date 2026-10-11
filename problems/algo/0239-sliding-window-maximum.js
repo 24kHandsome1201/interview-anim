@@ -7,7 +7,7 @@ def maxSlidingWindow(nums, k):
     ans = []
     for i, x in enumerate(nums):
         while dq and nums[dq[-1]] < x:
-            dq.pop()   # 比 x 小又靠左，不可能是最大值
+            dq.pop()   # 不可能成为最大值
         dq.append(i)
         if dq[0] <= i - k:
             dq.popleft()  # 队头滑出窗口

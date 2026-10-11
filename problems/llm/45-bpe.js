@@ -5,9 +5,10 @@ const code = `def bpe_train(corpus, num_merges):
     words = {tuple(w): c for w, c in corpus.items()}
     merges = []
     for _ in range(num_merges):
-        pairs = count_pairs(words)      # 统计相邻对频次
-        best = min(pairs, key=lambda p: (-pairs[p], p))
-        words = merge(words, best)      # 相邻该对都合并
+        pairs = count_pairs(words)      # 统计相邻对
+        key = lambda p: (-pairs[p], p)
+        best = min(pairs, key=key)
+        words = merge(words, best)      # 该对都合并
         merges.append(best)
     return merges`;
 
@@ -69,9 +70,9 @@ export default {
         }
         return [nw, c];
       });
-      rec.step([7, 8], `合并 <code>'${best[0]}' + '${best[1]}' → '${nt}'</code>（出现 ${pairs.get(best.join(' '))} 次）。全语料中所有相邻的该对都替换，词表 +1（现 ${vocab.length}）。`, scene(null, '', `\n本轮合并：${best.join(' + ')} → ${nt}`));
+      rec.step([7, 9], `合并 <code>'${best[0]}' + '${best[1]}' → '${nt}'</code>（出现 ${pairs.get(best.join(' '))} 次）。全语料中所有相邻的该对都替换，词表 +1（现 ${vocab.length}）。`, scene(null, '', `\n本轮合并：${best.join(' + ')} → ${nt}`));
     }
-    rec.step(9, `训练完成。merge 规则共 ${merges.length} 条；编码新词时按相同顺序应用即可（如 "lowest" → ${(() => { let w = 'lowest'.split(''); for (const [a, b] of merges) { const nw = []; for (let j = 0; j < w.length; j++) { if (j + 1 < w.length && w[j] === a && w[j + 1] === b) { nw.push(a + b); j++; } else nw.push(w[j]); } w = nw; } return w.join(' '); })()}）。`, scene());
+    rec.step(10, `训练完成。merge 规则共 ${merges.length} 条；编码新词时按相同顺序应用即可（如 "lowest" → ${(() => { let w = 'lowest'.split(''); for (const [a, b] of merges) { const nw = []; for (let j = 0; j < w.length; j++) { if (j + 1 < w.length && w[j] === a && w[j + 1] === b) { nw.push(a + b); j++; } else nw.push(w[j]); } w = nw; } return w.join(' '); })()}）。`, scene());
     return { steps: rec.steps, result: merges.map((m) => m.join('')) };
   },
   solve({ corpus, merges: NM }) {

@@ -7,14 +7,16 @@ class LoRALinear(nn.Module):
     def __init__(self, W, r, alpha):
         super().__init__()
         self.W = W                   # 冻结权重
-        self.A = nn.Parameter(torch.randn(r, W.size(1)))
-        self.B = nn.Parameter(torch.zeros(W.size(0), r))
+        self.A = nn.Parameter(
+            torch.randn(r, W.size(1)))
+        self.B = nn.Parameter(
+            torch.zeros(W.size(0), r))
         self.s = alpha / r
     def forward(self, x):
         return (x @ self.W.T
                 + self.s * x @ self.A.T @ self.B.T)
     def merge(self):
-        return self.W + self.s * self.B @ self.A   # 零延迟`;
+        return self.W + self.s * self.B @ self.A`;
 
 export default {
   id: 'llm-74', track: 'llm', num: 74, title: 'LoRA Linear', category: '微调',
@@ -52,7 +54,7 @@ export default {
        t('A 可学', [r, din], ['r', 'd_in']),
        t('B 可学', [dout, r], ['d_out', 'r']),
        { type: 'vars', id: 'v', items: { '可训参数': `${r * (din + dout)}（原 ${dout * din} 的 ${round((r * (din + dout)) / (dout * din) * 100, 1)}%）` } }]);
-    rec.step(9, `初始化：<code>B = 0</code>，A 小随机值。所以初始 ΔW = s·B·A = <b>0</b>——模型行为与原始 W 完全一致，微调从零扰动开始。`,
+    rec.step([10, 11], `初始化：<code>B = 0</code>，A 小随机值。所以初始 ΔW = s·B·A = <b>0</b>——模型行为与原始 W 完全一致，微调从零扰动开始。`,
       [{ type: 'row', id: 'ab', items: [
         { label: `B（初始全 0）`, values: B.map((rr) => rr.map(String)), rowLabels: Array.from({ length: dout }, (_, i) => `o${i}`), colLabels: Array.from({ length: r }, (_, j) => `r${j}`) },
         { op: '×' },
@@ -60,23 +62,23 @@ export default {
         { op: '=' },
         { label: 'ΔW = 0', values: Array.from({ length: dout }, () => Array(din).fill(0)) }] }]);
     const y0 = matmul(x, transpose(W))[0];
-    rec.step([12, 13], `前向：<code>y = x·Wᵀ + s·(x·Aᵀ·Bᵀ)</code>。B=0 时第二项为 0，y = x·Wᵀ = [${y0.map((v) => round(v, 2)).join(', ')}]。`,
+    rec.step([14, 15], `前向：<code>y = x·Wᵀ + s·(x·Aᵀ·Bᵀ)</code>。B=0 时第二项为 0，y = x·Wᵀ = [${y0.map((v) => round(v, 2)).join(', ')}]。`,
       [{ type: 'vars', id: 'v', items: { 'y（B=0 时）': `[${y0.map((v) => round(v, 2)).join(', ')}]`, '第二项': '0' } }]);
     const BA = matmul(Bt, A);
     const xA = matmul(x, transpose(A));
     const xAB = matmul(xA, transpose(Bt))[0];
     const y = y0.map((v, j) => v + s * xAB[j]);
-    rec.step([12, 13], `训练几步后 B 学到值：ΔW = s·B·A，低秩增量矩阵（秩 ≤ ${r}）。前向时旁路 <code>s·(xAᵀ)Bᵀ</code> 把增量加进输出。`,
+    rec.step([14, 15], `训练几步后 B 学到值：ΔW = s·B·A，低秩增量矩阵（秩 ≤ ${r}）。前向时旁路 <code>s·(xAᵀ)Bᵀ</code> 把增量加进输出。`,
       [{ type: 'row', id: 'dw', items: [
         { label: 'B（训练后）', values: roundM(Bt), rowLabels: Array.from({ length: dout }, (_, i) => `o${i}`), colLabels: Array.from({ length: r }, (_, j) => `r${j}`), heat: 'diverge' },
         { op: '×' },
         { label: 'A', values: roundM(A), rowLabels: Array.from({ length: r }, (_, j) => `r${j}`), colLabels: dl, heat: 'diverge' },
         { op: '=' },
         { label: `ΔW = s·BA（s = ${alpha}/${r} = ${s}）`, values: roundM(BA.map((rr) => rr.map((v) => v * s))), rowLabels: Array.from({ length: dout }, (_, i) => `o${i}`), colLabels: dl, heat: 'diverge' }] }]);
-    rec.step([12, 13], `<code>y = x·Wᵀ + ${s}·(x·Aᵀ·Bᵀ)</code> = [${y.map((v) => round(v, 2)).join(', ')}]。增量部分 = [${xAB.map((v) => round(v * s, 2)).join(', ')}]。`,
+    rec.step([14, 15], `<code>y = x·Wᵀ + ${s}·(x·Aᵀ·Bᵀ)</code> = [${y.map((v) => round(v, 2)).join(', ')}]。增量部分 = [${xAB.map((v) => round(v * s, 2)).join(', ')}]。`,
       [{ type: 'vars', id: 'v', items: { 'x·Wᵀ': `[${y0.map((v) => round(v, 2)).join(', ')}]`, 's·xAᵀBᵀ': `[${xAB.map((v) => round(v * s, 2)).join(', ')}]`, y: `[${y.map((v) => round(v, 2)).join(', ')}]` } }]);
     const merged = W.map((rr, i) => rr.map((v, j) => v + s * BA[i][j]));
-    rec.step([14, 15], `<code>merge()</code>：推理部署时把 <code>W + s·BA</code> 合成单个矩阵——与原始 Linear 完全相同的前向，<b>零额外延迟</b>。`,
+    rec.step([16, 17], `<code>merge()</code>：推理部署时把 <code>W + s·BA</code> 合成单个矩阵——与原始 Linear 完全相同的前向，<b>零额外延迟</b>。`,
       [{ type: 'matrix', id: 'm', label: '合并后 W′ = W + s·BA', values: roundM(merged), rowLabels: Array.from({ length: dout }, (_, i) => `o${i}`), colLabels: dl, heat: 'diverge' }]);
     return { steps: rec.steps, result: roundM([y], 4)[0] };
   },

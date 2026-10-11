@@ -2,16 +2,16 @@ import { recorder } from '../../js/util.js';
 
 const code = `def trap(height):
     left, right = 0, len(height) - 1
-    left_max = right_max = 0
+    l_max = r_max = 0
     ans = 0
     while left < right:
         if height[left] < height[right]:
-            left_max = max(left_max, height[left])
-            ans += left_max - height[left]
+            l_max = max(l_max, height[left])
+            ans += l_max - height[left]
             left += 1
         else:
-            right_max = max(right_max, height[right])
-            ans += right_max - height[right]
+            r_max = max(r_max, height[right])
+            ans += r_max - height[right]
             right -= 1
     return ans`;
 

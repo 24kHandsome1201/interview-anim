@@ -4,7 +4,7 @@ const code = `def permute(nums):
     ans = []
     def dfs(path, used):
         if len(path) == len(nums):
-            ans.append(path.copy())   # 到底了，收一个排列
+            ans.append(path.copy())   # 收一个排列
             return
         for i in range(len(nums)):
             if used[i]:

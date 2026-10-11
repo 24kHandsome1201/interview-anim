@@ -4,14 +4,14 @@ const code = `import math
 import torch
 
 def beam_search(logp_fn, beam_size, max_len):
-    beams = [([], 0.0)]              # (前缀, 累积logp)
+    beams = [([], 0.0)]              # (seq,Σlogp)
     for _ in range(max_len):
         cand = []
         for seq, s in beams:
             for tok, lp in enumerate(logp_fn(seq)):
                 cand.append((seq + [tok], s + lp))
         cand.sort(key=lambda x: x[1], reverse=True)
-        beams = cand[:beam_size]     # 只留 top-k 个前缀
+        beams = cand[:beam_size]     # 留 top-k
     return max(beams, key=lambda x: x[1])[0]`;
 
 const TOK = ['我', '爱', '学', '习', 'AI', '。'];

@@ -15,12 +15,13 @@ const code = `def threeSum(nums):
             elif s > 0:
                 r -= 1
             else:
-                ans.append([nums[i], nums[l], nums[r]])
+                ans.append([nums[i],
+                            nums[l], nums[r]])
                 l += 1
                 r -= 1
-                while l < r and nums[l] == nums[l - 1]:
+                while l < r and nums[l]==nums[l-1]:
                     l += 1      # 跳过重复的左数
-                while l < r and nums[r] == nums[r + 1]:
+                while l < r and nums[r]==nums[r+1]:
                     r -= 1      # 跳过重复的右数
     return ans`;
 
@@ -72,7 +73,7 @@ export default {
         if (s > 0) { r--; continue; }
         ans.push([a[i], a[l], a[r]]);
         foundCells[l] = 'ok'; foundCells[r] = 'ok'; foundCells[i] = 'ok';
-        rec.step([16, 17, 18], `记录三元组 <code>[${a[i]}, ${a[l]}, ${a[r]}]</code>，然后 l、r 同时内缩继续找下一组。`, scene());
+        rec.step([16, 18], `记录三元组 <code>[${a[i]}, ${a[l]}, ${a[r]}]</code>，然后 l、r 同时内缩继续找下一组。`, scene());
         l++; r--;
         let skipped = 0;
         while (l < r && a[l] === a[l - 1]) { l++; skipped++; }
@@ -80,7 +81,7 @@ export default {
         if (skipped) rec.step([20, 23], `跳过 ${skipped} 个与刚用过的值相同的元素，避免重复三元组。`, scene({ [i]: 'cur' }));
       }
     }
-    rec.step(23, `结束。共找到 <code>${ans.length}</code> 个不重复三元组：${ans.map((t) => `[${t.join(', ')}]`).join('，') || '无'}。`, scene());
+    rec.step(24, `结束。共找到 <code>${ans.length}</code> 个不重复三元组：${ans.map((t) => `[${t.join(', ')}]`).join('，') || '无'}。`, scene());
     const cmp = (x, y) => { for (let k = 0; k < 3; k++) if (x[k] !== y[k]) return x[k] - y[k]; return 0; };
     return { steps: rec.steps, result: [...ans].sort(cmp) };
   },

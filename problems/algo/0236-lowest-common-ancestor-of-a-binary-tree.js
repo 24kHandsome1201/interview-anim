@@ -2,11 +2,11 @@ import { recorder, parseTree, treeLayer } from '../../js/util.js';
 
 const code = `def lowestCommonAncestor(root, p, q):
     if root in (None, p, q):
-        return root              # 空 / 命中，直接上报
+        return root              # 空 / 命中
     left = lowestCommonAncestor(root.left, p, q)
     right = lowestCommonAncestor(root.right, p, q)
     if left and right:
-        return root              # p、q 分居两侧 -> 即 LCA
+        return root              # 分居两侧 = LCA
     return left or right         # 非空一边继续上报`;
 
 export default {

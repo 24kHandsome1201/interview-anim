@@ -10,10 +10,10 @@ const code = `def numIslands(grid):
     return count
 
 def dfs(g, i, j):
-    if (i < 0 or i >= len(g) or j < 0 or j >= len(g[0])
-            or g[i][j] != '1'):
+    if (i < 0 or i >= len(g) or j < 0 or
+            j >= len(g[0]) or g[i][j] != '1'):
         return
-    g[i][j] = '0'                 # 染色 = 标记访问过
+    g[i][j] = '0'                 # 染色标记
     dfs(g, i + 1, j)
     dfs(g, i - 1, j)
     dfs(g, i, j + 1)

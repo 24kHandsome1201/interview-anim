@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 def dpo_loss(lp_pol_c, lp_pol_r,
              lp_ref_c, lp_ref_r, beta):
-    # 每条：policy 相对 ref 对 chosen / rejected 的偏好差
+    # 每条：policy 相对 ref 的偏好差
     logit = beta * ((lp_pol_c - lp_ref_c)
                     - (lp_pol_r - lp_ref_r))
     return -F.logsigmoid(logit).mean()`;

@@ -5,8 +5,8 @@ const code = `import torch
 def moe_forward(x, W_gate, experts, k):
     logits = x @ W_gate                    # [T, E]
     probs = torch.softmax(logits, dim=-1)
-    topv, topi = probs.topk(k, dim=-1)     # 选 k 个专家
-    w = topv / topv.sum(dim=-1, keepdim=True)   # 重新归一化
+    topv, topi = probs.topk(k, dim=-1)     # 选 k
+    w = topv / topv.sum(dim=-1, keepdim=True)
     out = torch.zeros_like(x)
     for t in range(x.size(0)):
         for j in range(k):
